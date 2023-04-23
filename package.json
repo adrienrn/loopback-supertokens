@@ -1,0 +1,12 @@
+{
+  "name": "loopback-supertokens",
+  "version": "0.1.0",
+  "description": "LoopBack extensions for SuperTokens",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Hussard <adrien.ricartnoblet@gmail.com>",
+  "license": "ISC"
+}
