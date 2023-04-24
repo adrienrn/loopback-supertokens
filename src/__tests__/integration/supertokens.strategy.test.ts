@@ -13,6 +13,7 @@ import { configureSupertokens } from '../fixtures/test-app/supertokens.config';
 describe('@authenticate("supertokens")', () => {
   let app: TestApplication;
   let client: Client;
+  let getSessionStub;
 
   before(async () => {
     configureSupertokens();
@@ -32,8 +33,12 @@ describe('@authenticate("supertokens")', () => {
     await app.stop();
   });
 
+  afterEach(() => {
+    getSessionStub.restore();
+  })
+
   it('can call protected endpoint', async () => {
-    const getSessionStub = sinon.stub(Session, 'getSession').returns(
+    getSessionStub = sinon.stub(Session, 'getSession').returns(
       Promise.resolve({
         getUserId: () => 'f48b7167-8d95-451c-bbfc-8a12cd49e763',
         getAccessTokenPayload: () => ({
@@ -56,12 +61,10 @@ describe('@authenticate("supertokens")', () => {
       },
       userId: 'f48b7167-8d95-451c-bbfc-8a12cd49e763',
     });
-
-    getSessionStub.restore();
   });
 
   it('returns proper 401 on SuperTokens error', async () => {
-    const getSessionStub = sinon.stub(Session, 'getSession').throws(
+    getSessionStub = sinon.stub(Session, 'getSession').throws(
       new SuperTokensError({
         message: '401 error from SuperTokens',
         type: 'stub',
@@ -77,12 +80,10 @@ describe('@authenticate("supertokens")', () => {
         statusCode: 401,
       },
     });
-
-    getSessionStub.restore();
   });
 
   it('returns 500 on unexpected error', async () => {
-    const getSessionStub = sinon
+    getSessionStub = sinon
       .stub(Session, 'getSession')
       .throws(new Error('unexpected error from test'));
 
@@ -94,7 +95,5 @@ describe('@authenticate("supertokens")', () => {
         statusCode: 500,
       },
     });
-
-    getSessionStub.restore();
   });
 });

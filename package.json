@@ -4,7 +4,7 @@
   "description": "LoopBack extensions for SuperTokens",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "ts-mocha -p tsconfig.json src/**/*.test.ts"
   },
   "keywords": [],
   "author": "Hussard <adrien.ricartnoblet@gmail.com>",
@@ -19,7 +19,14 @@
     "@loopback/core": "^4.0.10",
     "@loopback/repository": "^5.1.5",
     "@loopback/rest": "^12.0.10",
-    "@loopback/testlab": "^5.0.10"
+    "@loopback/security": "^0.8.10",
+    "@loopback/service-proxy": "^5.0.10",
+    "@loopback/testlab": "^5.0.10",
+    "@types/expect": "^24.3.0",
+    "@types/mocha": "^10.0.1",
+    "mocha": "^10.2.0",
+    "ts-mocha": "^10.0.0",
+    "typescript": "^5.0.4"
   },
   "peerDependencies": {
     "@loopback/authentication": "9.0.10",
@@ -28,6 +35,7 @@
     "@loopback/core": "^4.0.10",
     "@loopback/repository": "^5.1.5",
     "@loopback/rest": "^12.0.10",
+    "@loopback/security": "^0.8.10",
     "@loopback/testlab": "^5.0.10"
   }
 }
