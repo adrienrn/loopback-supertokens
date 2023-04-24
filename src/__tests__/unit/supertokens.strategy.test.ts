@@ -3,7 +3,7 @@ import { RestBindings } from '@loopback/rest';
 import { expect, sinon } from '@loopback/testlab';
 import { Error as SuperTokensError } from 'supertokens-node';
 import Session from 'supertokens-node/recipe/session';
-import { SuperTokensAuthenticationStrategy } from '../../supertokens.strategy';
+import { SuperTokensAuthenticationStrategy } from '../../authentication-strategies/supertokens.strategy';
 
 describe('SuperTokensAuthenticationStrategy', () => {
   let context: Context;
@@ -13,8 +13,7 @@ describe('SuperTokensAuthenticationStrategy', () => {
     context.bind(RestBindings.Http.CONTEXT).to(new Context());
   });
 
-  it('has proper key', async () => {
-    context.bind(RestBindings.Http.CONTEXT).to(new Context());
+  it('has proper name', async () => {
     const strategy = await instantiateClass(
       SuperTokensAuthenticationStrategy,
       context,
@@ -24,7 +23,7 @@ describe('SuperTokensAuthenticationStrategy', () => {
   });
 
   it('can execute authenticate', async () => {
-    sinon.stub(Session, 'getSession').returns(
+    const getSessionStub = sinon.stub(Session, 'getSession').returns(
       Promise.resolve({
         getUserId: () => '123',
         getAccessTokenPayload: () => ({
@@ -35,13 +34,14 @@ describe('SuperTokensAuthenticationStrategy', () => {
         }),
       } as unknown as any),
     );
-    context.bind(RestBindings.Http.CONTEXT).to(new Context());
+    
     const strategy = await instantiateClass(
       SuperTokensAuthenticationStrategy,
       context,
     );
 
     const profile = await strategy.authenticate();
+    sinon.assert.calledOnce(getSessionStub);
     const sym =
       Object.getOwnPropertySymbols(profile).find(
         s => s.description === 'securityId',
@@ -56,17 +56,17 @@ describe('SuperTokensAuthenticationStrategy', () => {
       },
     });
 
-    (Session.getSession as sinon.SinonStub).restore();
+    getSessionStub.restore();
   });
 
   it('throws on getSession error', async () => {
-    sinon.stub(Session, 'getSession').throws(
+    const getSessionStub = sinon.stub(Session, 'getSession').throws(
       new SuperTokensError({
         message: '401 error from unit test',
         type: 'stub',
       }),
     );
-    context.bind(RestBindings.Http.CONTEXT).to(new Context());
+    
     const strategy = await instantiateClass(
       SuperTokensAuthenticationStrategy,
       context,
@@ -75,7 +75,7 @@ describe('SuperTokensAuthenticationStrategy', () => {
     return strategy
       .authenticate()
       .finally(() => {
-        (Session.getSession as sinon.SinonStub).restore();
+        getSessionStub.restore();
       })
       .catch(error => {
         expect(error.message).to.be.equal('401 error from unit test');
@@ -84,10 +84,9 @@ describe('SuperTokensAuthenticationStrategy', () => {
   });
 
   it('throws the underlying on unexpected error', async () => {
-    sinon
+    const getSessionStub = sinon
       .stub(Session, 'getSession')
       .throws(new Error('unexpected error from unit test'));
-    context.bind(RestBindings.Http.CONTEXT).to(new Context());
     const strategy = await instantiateClass(
       SuperTokensAuthenticationStrategy,
       context,
@@ -96,7 +95,7 @@ describe('SuperTokensAuthenticationStrategy', () => {
     return strategy
       .authenticate()
       .finally(() => {
-        (Session.getSession as sinon.SinonStub).restore();
+        getSessionStub.restore();
       })
       .catch(error => {
         expect(error.message).to.be.equal('unexpected error from unit test');
