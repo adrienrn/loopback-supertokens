@@ -5,7 +5,7 @@ import type {
 } from '@loopback/authorization';
 import { AuthorizationDecision } from '@loopback/authorization';
 import { Provider } from '@loopback/core';
-import { MiddlewareContext } from '@loopback/rest';
+import { MiddlewareBindings, MiddlewareContext } from '@loopback/rest';
 import Session, {
   SessionClaimValidator,
 } from 'supertokens-node/recipe/session';
@@ -26,7 +26,7 @@ export class SuperTokensRBACAuthorizeProvider implements Provider<Authorizer> {
     metadata: AuthorizationMetadata,
   ) {
     const ctx = await authorizationCtx.invocationContext.get<MiddlewareContext>(
-      'middleware.http.context',
+      MiddlewareBindings.CONTEXT,
     );
 
     const rbacSessionClaimValidator: SessionClaimValidator[] = [];

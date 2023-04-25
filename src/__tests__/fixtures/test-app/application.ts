@@ -1,4 +1,5 @@
 import { AuthenticationComponent } from '@loopback/authentication';
+import { AuthorizationBindings, AuthorizationComponent, AuthorizationDecision } from '@loopback/authorization';
 import { BootMixin } from '@loopback/boot';
 import { ApplicationConfig } from '@loopback/core';
 import { RepositoryMixin } from '@loopback/repository';
@@ -14,6 +15,11 @@ export class TestApplication extends BootMixin(
 
     // Mount authentication system
     this.component(AuthenticationComponent);
+    this.configure(AuthorizationBindings.COMPONENT).to({
+      defaultDecision: AuthorizationDecision.DENY,
+      precedence: AuthorizationDecision.ALLOW,
+    });
+    this.component(AuthorizationComponent);
     this.component(SupertokensComponent);
 
     this.projectRoot = __dirname;
