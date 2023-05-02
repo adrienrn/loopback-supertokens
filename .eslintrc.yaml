@@ -1,0 +1,9 @@
+extends:
+  - 'airbnb'
+  - 'airbnb-typescript'
+  - 'prettier' # disables rules that conflict with Prettier
+parserOptions:
+  project: './tsconfig.json'
+rules:
+  'class-methods-use-this': 'off'
+  'import/prefer-default-export': 'off'

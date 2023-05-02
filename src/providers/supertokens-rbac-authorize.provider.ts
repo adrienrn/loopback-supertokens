@@ -12,8 +12,6 @@ import Session, {
 import UserRoles from 'supertokens-node/recipe/userroles';
 
 export class SuperTokensRBACAuthorizeProvider implements Provider<Authorizer> {
-  constructor() {}
-
   /**
    * @returns authenticateFn
    */
@@ -30,11 +28,11 @@ export class SuperTokensRBACAuthorizeProvider implements Provider<Authorizer> {
     );
 
     const rbacSessionClaimValidator: SessionClaimValidator[] = [];
-    if (!!metadata.allowedRoles) {
+    if (metadata.allowedRoles && metadata.allowedRoles.length) {
       rbacSessionClaimValidator.push(
         UserRoles.UserRoleClaim.validators.includesAll(metadata.allowedRoles),
       );
-    } else if (!!metadata.deniedRoles) {
+    } else if (metadata.deniedRoles && metadata.deniedRoles.length) {
       rbacSessionClaimValidator.push(
         UserRoles.UserRoleClaim.validators.excludesAll(metadata.deniedRoles),
       );
@@ -49,8 +47,6 @@ export class SuperTokensRBACAuthorizeProvider implements Provider<Authorizer> {
 
       return AuthorizationDecision.ALLOW;
     } catch (err) {
-      console.error(err);
-
       return AuthorizationDecision.DENY;
     }
   }

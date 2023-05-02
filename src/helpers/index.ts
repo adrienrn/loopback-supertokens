@@ -15,6 +15,7 @@ export async function sendPostSignUpWebhook(
   }
 
   try {
+    // eslint-disable-next-line no-new
     new URL(options.endpoint);
   } catch (err) {
     throw new Error(
@@ -32,7 +33,7 @@ export async function sendPostSignUpWebhook(
       },
       {
         headers: {
-          Authorization: 'Api-Key-V1 ' + options.apiKey,
+          Authorization: `Api-Key-V1 ${options.apiKey}`,
         },
       },
     );

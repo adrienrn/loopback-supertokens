@@ -4,8 +4,6 @@ import { get } from '@loopback/rest';
 import { SecurityBindings, UserProfile } from '@loopback/security';
 
 export class AuthenticationController {
-  constructor() {}
-
   @authenticate('supertokens')
   @get('/authentication/users/me', {
     responses: {
@@ -24,10 +22,7 @@ export class AuthenticationController {
     },
     summary: 'Get the current logged in user, inferred from JWT token',
   })
-  async getCurrentUser(
-    @inject(SecurityBindings.USER)
-    profile: UserProfile,
-  ) {
+  async getCurrentUser(@inject(SecurityBindings.USER) profile: UserProfile) {
     return {
       userId: profile.userId,
       userDataInAccessToken: profile.userDataInAccessToken,

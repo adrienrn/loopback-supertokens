@@ -34,7 +34,7 @@ describe('SuperTokensAuthenticationStrategy', () => {
         }),
       } as unknown as any),
     );
-    
+
     const strategy = await instantiateClass(
       SuperTokensAuthenticationStrategy,
       context,
@@ -44,7 +44,7 @@ describe('SuperTokensAuthenticationStrategy', () => {
     sinon.assert.calledOnce(getSessionStub);
     const sym =
       Object.getOwnPropertySymbols(profile).find(
-        s => s.description === 'securityId',
+        (s) => s.description === 'securityId',
       ) || '';
 
     expect((profile as any)[sym]).to.be.equal('123');
@@ -66,7 +66,7 @@ describe('SuperTokensAuthenticationStrategy', () => {
         type: 'stub',
       }),
     );
-    
+
     const strategy = await instantiateClass(
       SuperTokensAuthenticationStrategy,
       context,
@@ -77,7 +77,7 @@ describe('SuperTokensAuthenticationStrategy', () => {
       .finally(() => {
         getSessionStub.restore();
       })
-      .catch(error => {
+      .catch((error) => {
         expect(error.message).to.be.equal('401 error from unit test');
         expect(error.status).to.be.equal(401);
       });
@@ -97,7 +97,7 @@ describe('SuperTokensAuthenticationStrategy', () => {
       .finally(() => {
         getSessionStub.restore();
       })
-      .catch(error => {
+      .catch((error) => {
         expect(error.message).to.be.equal('unexpected error from unit test');
         expect(error.status).to.be.undefined();
       });

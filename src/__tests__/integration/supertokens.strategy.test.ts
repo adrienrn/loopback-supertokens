@@ -35,7 +35,7 @@ describe('@authenticate("supertokens")', () => {
 
   afterEach(() => {
     getSessionStub.restore();
-  })
+  });
 
   it('can call protected endpoint', async () => {
     getSessionStub = sinon.stub(Session, 'getSession').returns(
