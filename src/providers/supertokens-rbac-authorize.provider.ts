@@ -12,8 +12,6 @@ import Session, {
 import UserRoles from 'supertokens-node/recipe/userroles';
 
 export class SuperTokensRBACAuthorizeProvider implements Provider<Authorizer> {
-  constructor() {}
-
   /**
    * @returns authenticateFn
    */
@@ -49,8 +47,6 @@ export class SuperTokensRBACAuthorizeProvider implements Provider<Authorizer> {
 
       return AuthorizationDecision.ALLOW;
     } catch (err) {
-      console.error(err);
-
       return AuthorizationDecision.DENY;
     }
   }

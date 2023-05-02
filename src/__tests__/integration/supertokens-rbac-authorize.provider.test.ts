@@ -4,11 +4,11 @@ import {
   expect,
   givenHttpServerConfig,
   sinon,
-} from "@loopback/testlab";
-import Session from "supertokens-node/recipe/session";
-import { TestApplication } from "../fixtures/test-app/application";
-import { configureSupertokens } from "../fixtures/test-app/supertokens.config";
-import { SuperTokensRBACAuthorizeProvider } from "../../providers/supertokens-rbac-authorize.provider";
+} from '@loopback/testlab';
+import Session from 'supertokens-node/recipe/session';
+import { TestApplication } from '../fixtures/test-app/application';
+import { configureSupertokens } from '../fixtures/test-app/supertokens.config';
+import { SuperTokensRBACAuthorizeProvider } from '../../providers/supertokens-rbac-authorize.provider';
 
 describe('@authorize w/ SuperTokensRBACAuthorizeProvider', () => {
   let app: TestApplication;
@@ -37,26 +37,26 @@ describe('@authorize w/ SuperTokensRBACAuthorizeProvider', () => {
     getSessionStub.restore();
   });
 
-  it("authorize is called for protected endpoint", async () => {
+  it('authorize is called for protected endpoint', async () => {
     const authorizerSpy = sinon.spy(
       SuperTokensRBACAuthorizeProvider.prototype,
-      "authorize"
+      'authorize',
     );
 
-    getSessionStub = sinon.stub(Session, "getSession").returns(
+    getSessionStub = sinon.stub(Session, 'getSession').returns(
       Promise.resolve({
-        getUserId: () => "f48b7167-8d95-451c-bbfc-8a12cd49e763",
+        getUserId: () => 'f48b7167-8d95-451c-bbfc-8a12cd49e763',
         getAccessTokenPayload: () => ({
-          "st-role": {
+          'st-role': {
             t: 1681996316335,
-            v: ["admin"],
+            v: ['admin'],
           },
         }),
-      } as unknown as any)
+      } as unknown as any),
     );
 
-    await client.post("/refunds").expect(200);
-    
+    await client.post('/refunds').expect(200);
+
     // authenticate calls 'getSession' with (req, res)
     expect(getSessionStub.firstCall.args.length).to.be.equal(2);
 

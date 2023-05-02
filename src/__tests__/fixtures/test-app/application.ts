@@ -1,5 +1,9 @@
 import { AuthenticationComponent } from '@loopback/authentication';
-import { AuthorizationBindings, AuthorizationComponent, AuthorizationDecision } from '@loopback/authorization';
+import {
+  AuthorizationBindings,
+  AuthorizationComponent,
+  AuthorizationDecision,
+} from '@loopback/authorization';
 import { BootMixin } from '@loopback/boot';
 import { ApplicationConfig } from '@loopback/core';
 import { RepositoryMixin } from '@loopback/repository';
@@ -27,10 +31,7 @@ export class TestApplication extends BootMixin(
     this.bootOptions = {
       controllers: {
         dirs: ['controllers'],
-        extensions: [
-          '.controller.ts',
-          '.controller.js'
-        ],
+        extensions: ['.controller.ts', '.controller.js'],
         nested: true,
       },
     };
