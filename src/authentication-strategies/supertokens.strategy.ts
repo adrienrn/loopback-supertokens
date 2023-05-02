@@ -23,7 +23,7 @@ export class SuperTokensAuthenticationStrategy
   async authenticate(): Promise<UserProfile | RedirectRoute | undefined> {
     try {
       // https://supertokens.com/docs/emailpassword/common-customizations/sessions/session-verification-in-api/get-session#using-getsession
-      let session = await Session.getSession(this.ctx, this.ctx);
+      const session = await Session.getSession(this.ctx, this.ctx);
 
       return {
         [securityId]: session.getUserId(),

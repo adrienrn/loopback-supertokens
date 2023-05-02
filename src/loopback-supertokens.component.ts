@@ -13,6 +13,7 @@ export class SupertokensComponent implements Component {
       .toProvider(SuperTokensRBACAuthorizeProvider)
       .tag(AuthorizationTags.AUTHORIZER),
   ];
+
   constructor(@inject(CoreBindings.APPLICATION_INSTANCE) app: RestApplication) {
     // Set up the main middleware
     app.middleware(middleware);

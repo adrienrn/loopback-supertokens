@@ -8,6 +8,7 @@ const config = {
 
 export class MemoryDataSource extends juggler.DataSource {
   static dataSourceName = 'db';
+
   static readonly defaultConfig = config;
 
   constructor(

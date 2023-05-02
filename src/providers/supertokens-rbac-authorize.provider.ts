@@ -28,11 +28,11 @@ export class SuperTokensRBACAuthorizeProvider implements Provider<Authorizer> {
     );
 
     const rbacSessionClaimValidator: SessionClaimValidator[] = [];
-    if (!!metadata.allowedRoles) {
+    if (metadata.allowedRoles && metadata.allowedRoles.length) {
       rbacSessionClaimValidator.push(
         UserRoles.UserRoleClaim.validators.includesAll(metadata.allowedRoles),
       );
-    } else if (!!metadata.deniedRoles) {
+    } else if (metadata.deniedRoles && metadata.deniedRoles.length) {
       rbacSessionClaimValidator.push(
         UserRoles.UserRoleClaim.validators.excludesAll(metadata.deniedRoles),
       );
