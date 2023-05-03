@@ -1,6 +1,6 @@
 {
   "name": "loopback-supertokens",
-  "version": "0.0.0-development",
+  "version": "1.0.0",
   "description": "LoopBack extensions for authentication and authorization using SuperTokens",
   "keywords": [
     "LoopBack",
