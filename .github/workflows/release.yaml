@@ -9,17 +9,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+          token: ${{ secrets.RELEASE_GITHUB_TOKEN }}
       - uses: pnpm/action-setup@v2
         with:
           version: 7
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+      - uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node-version }}
           cache: 'pnpm'
       - run: pnpm install
       - name: Semantic Release
-        uses: cycjimmy/semantic-release-action@v3
+        run: pnpm release
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.RELEASE_NPM_TOKEN }}
