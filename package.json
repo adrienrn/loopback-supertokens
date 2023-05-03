@@ -39,6 +39,8 @@
     "@loopback/security": "^0.8.10",
     "@loopback/service-proxy": "^5.0.10",
     "@loopback/testlab": "^5.0.10",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
     "@types/expect": "^24.3.0",
     "@types/mocha": "^10.0.1",
     "@typescript-eslint/eslint-plugin": "^5.59.2",
