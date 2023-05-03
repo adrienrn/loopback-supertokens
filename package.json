@@ -20,6 +20,9 @@
   "license": "MIT",
   "author": "Hussard <adrien.ricartnoblet@gmail.com>",
   "main": "dist/index.js",
+  "files": [
+    "/dist"
+  ],
   "scripts": {
     "build": "tsc",
     "lint": "eslint .",
