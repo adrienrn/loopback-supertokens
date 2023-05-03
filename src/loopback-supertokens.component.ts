@@ -8,7 +8,7 @@ import { SuperTokensAuthenticationStrategy } from './authentication-strategies/s
 import { SuperTokensRBACAuthorizeProvider } from './providers/supertokens-rbac-authorize.provider';
 
 export class SupertokensComponent implements Component {
-  bindings = [
+  bindings: Binding[] = [
     Binding.bind('loopback-supertokens.rbac-authorizer-provider')
       .toProvider(SuperTokensRBACAuthorizeProvider)
       .tag(AuthorizationTags.AUTHORIZER),
