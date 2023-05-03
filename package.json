@@ -1,6 +1,6 @@
 {
   "name": "loopback-supertokens",
-  "version": "0.1.0",
+  "version": "0.0.0-development",
   "description": "LoopBack extensions for authentication and authorization using SuperTokens",
   "keywords": [
     "LoopBack",
@@ -13,12 +13,17 @@
     "jwt",
     "refresh tokens"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/adrienrn/loopback-supertokens.git"
+  },
   "license": "MIT",
   "author": "Hussard <adrien.ricartnoblet@gmail.com>",
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
     "lint": "eslint .",
+    "release": "semantic-release",
     "test": "ts-mocha -p tsconfig.json src/**/*.test.ts"
   },
   "dependencies": {
@@ -45,6 +50,7 @@
     "eslint-config-prettier": "^8.8.0",
     "mocha": "^10.2.0",
     "prettier": "^2.8.8",
+    "semantic-release": "^21.0.2",
     "ts-mocha": "^10.0.0",
     "typescript": "^5.0.4"
   },
