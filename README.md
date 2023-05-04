@@ -39,8 +39,6 @@ export class TestApplication extends BootMixin(
 
 That's pretty much it.
 
-You can annotate your controllers files using `@authenticate` and `@authorize` as described in Usage below.
-
 # Usage
 
 ## Authentication
