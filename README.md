@@ -94,13 +94,11 @@ export class TeamController {
 
 Refer to [Loopback authorization component](https://loopback.io/doc/en/lb4/Authorization-overview.html) for more details.
 
-# Using with `@loopback/rest-crud`
+## Work-around: using with `@loopback/rest-crud`
 
-LoopBack offers a way to generate controllers automatically which does not allow to annotate methods or controllers. This isn't only an issue with this extension but with any app that wants to use the `@authenticate` decorator with `@loopback/rest-crud`.
+LoopBack offers a way to generate controllers automatically which does not allow to annotate methods or controllers.
 
-As a work-around, one can bypass the auto-wiring provided by `@loopback/rest-crud` and manually set up the container, manually calling the `defineCrudRestController` function to register/configure the controller.
-
-Instead of creating a file inside the `src/model-endpoints` directory, create a file inside `src/controllers` with the following content:
+As a work-around, one can bypass the auto-wiring provided by `@loopback/rest-crud` and manually set up the container, manually calling the `defineCrudRestController` function to register/configure the controller. Instead of creating a file inside the `src/model-endpoints` directory, create a file inside `src/controllers` with the following content:
 
 ```ts
 import { authenticate } from '@loopback/authentication';
@@ -125,6 +123,8 @@ export class TeamController extends CrudRestController {
   }
 }
 ```
+
+This isn't only an issue with this extension but with any app that wants to use the `@authenticate` decorator with `@loopback/rest-crud`.
 
 See also:
 
