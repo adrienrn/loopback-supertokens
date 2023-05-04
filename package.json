@@ -62,14 +62,14 @@
     "typescript": "^5.0.4"
   },
   "peerDependencies": {
-    "@loopback/authentication": "9.0.10",
-    "@loopback/authorization": "^0.12.10",
-    "@loopback/boot": "^5.0.10",
+    "@loopback/authentication": "^9.0.4",
+    "@loopback/authorization": "^0.12.6",
+    "@loopback/boot": "^5.0.4",
     "@loopback/core": "^4.0.10",
-    "@loopback/repository": "^5.1.5",
-    "@loopback/rest": "^12.0.10",
+    "@loopback/repository": "^5.0.4",
+    "@loopback/rest": "^12.0.4",
     "@loopback/security": "^0.8.10",
-    "@loopback/testlab": "^5.0.10",
+    "@loopback/testlab": "^5.0.4",
     "supertokens-node": "^13.5.0"
   },
   "publishConfig": {
