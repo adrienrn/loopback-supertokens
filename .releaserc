@@ -1,6 +1,28 @@
 plugins:
   - '@semantic-release/commit-analyzer'
-  - '@semantic-release/release-notes-generator'
+  - [
+      '@semantic-release/release-notes-generator',
+      {
+        preset: 'conventionalcommits',
+        presetConfig:
+          {
+            types:
+              [
+                { type: 'feat', section: 'Features' },
+                { type: 'fix', section: 'Bug Fixes' },
+                { type: 'perf', section: 'Performance Improvements' },
+                { type: 'revert', section: 'Reverts' },
+                { type: 'refactor', section: 'Refactor' },
+                { type: 'build', section: 'Internal' },
+                { type: 'chore', section: 'Internal' },
+                { type: 'ci', section: 'Internal' },
+                { type: 'docs', section: 'Internal' },
+                { type: 'style', section: 'Internal' },
+                { type: 'test', section: 'Internal' },
+              ],
+          },
+      },
+    ]
   - '@semantic-release/changelog'
   - '@semantic-release/npm'
   - '@semantic-release/git'

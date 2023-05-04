@@ -20,6 +20,7 @@ jobs:
         with:
           cache: 'pnpm'
       - run: pnpm install
+      - run: pnpm build
       - name: Semantic Release
         run: pnpm release
         env:
