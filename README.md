@@ -34,7 +34,9 @@ export class TestApplication extends BootMixin(
 }
 ```
 
-That's pretty much it. Start using `@authenticate` and `@authorize` in your controller files as described in Usage below.
+That's pretty much it.
+
+You can annotate your controllers files using `@authenticate` and `@authorize` as described in Usage below.
 
 # Usage
 
