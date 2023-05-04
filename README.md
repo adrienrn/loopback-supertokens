@@ -123,14 +123,13 @@ export class TeamController extends CrudRestController {
   ) {
     super(entityRepository);
   }
-
-  find(filter?: Filter<Team> | undefined): Promise<Team[]> {
-    super.find(filter);
-  }
 }
 ```
 
-See also: https://github.com/loopbackio/loopback-next/discussions/8905
+See also:
+
+- https://github.com/loopbackio/loopback-next/discussions/8905
+- https://github.com/loopbackio/loopback-next/tree/0ece5e7f0113dcc070ba44210c472257f8bd0e93/packages/rest-crud#creating-a-crud-controller
 
 # Why SuperTokens?
 
