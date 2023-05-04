@@ -9,7 +9,10 @@ LoopBack extension for [SuperTokens](https://supertokens.com/).
 Install the dependency:
 
 ```
-pnpm add loopback-supertokens @loopback/authentication @loopback/authorization
+pnpm add \
+    loopback-supertokens \
+    @loopback/authentication \
+    @loopback/authorization
 ```
 
 Open `src/application.ts` and mount `SupertokensComponent` after the `AuthenticationComponent` and `AuthorizationComponent`:
@@ -137,7 +140,11 @@ See also:
 
 LoopBack authentication examples and extensions can be limitating and require to roll your own implementation in many places to have a fully-fledge production-ready authentication. Security is hard and rolling your own implementation is hardly a good idea.
 
-SuperTokens provides a all-in-one open-source authentication solution including various auth. methods (email/password, social logins, passwordless, etc), session/token management, multi-factor authentication and user roles (role-based access control, i.e. _RBAC_) and both an admin user management dashboard and a front-end SDK.
+SuperTokens provides a all-in-one open-source authentication solution including:
+
+- **Various auth. methods:** email/password, social logins, passwordless, etc;
+- **Complementary features:** session/token management, multi-factor authentication, user roles (role-based access control, i.e. _RBAC_), reset password flow, email verification, etc;
+- **Tools:** such as user management dashboard and front-end SDK;
 
 # What are alternatives?
 
