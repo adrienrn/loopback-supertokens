@@ -2,6 +2,11 @@ import axios from 'axios';
 import EmailPassword from 'supertokens-node/recipe/emailpassword';
 import { URL } from 'url';
 
+export * from './webhook';
+
+/**
+ * @deprecated use dispatchWebhookEvent instead
+ */
 export async function sendPostSignUpWebhook(
   originalImplementation: EmailPassword.APIInterface,
   input: any /* @TODO: how to type this? */,
