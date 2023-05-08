@@ -16,19 +16,20 @@ export function dispatchWebhookEvent(
   },
 ) {
   const timestamp = new Date().getTime();
-  const signature = createEventSignature(event, timestamp, options.secret);
+  const signature = computeEventSignature(event, timestamp, options.secret);
 
   const sanitiziedEndpoint = sanitizeWebhookEndpoint(options.endpoint);
-  return axios.post(sanitiziedEndpoint, event, {
-    headers: {
-      'Webhook-Signature': `t=${timestamp} v1=${signature}`,
-    },
-  });
-}
-
-export function verifyWebhookEventSignature(signature: string, secret: string) {
-  // @TODO implement verify signature and timestamp
-  return false;
+  return axios
+    .post(sanitiziedEndpoint, event, {
+      headers: {
+        'Webhook-Signature': `t=${timestamp} v1=${signature}`,
+      },
+    })
+    .catch((err) => {
+      throw new Error(
+        `Webhook failed: status="${err.code}" message="${err.message}"`,
+      );
+    });
 }
 
 export function createUserSignInEvent(data: { user: User }): UserSignInEvent {
@@ -53,17 +54,7 @@ export function createUserSignUpEvent(data: { user: User }): UserSignUpEvent {
   };
 }
 
-function sanitizeWebhookEndpoint(endpoint: string) {
-  try {
-    const parsedUrl = new URL(endpoint);
-
-    return parsedUrl.toString();
-  } catch (err) {
-    throw new Error(`Invalid endpoint, expected valid URL, got "${endpoint}"`);
-  }
-}
-
-function createEventSignature(
+export function computeEventSignature(
   event: WebhookEvent<unknown>,
   timestamp: number,
   secret: string,
@@ -72,4 +63,16 @@ function createEventSignature(
     .createHmac('sha256', secret)
     .update(`${timestamp}.${JSON.stringify(event)}`)
     .digest('base64');
+}
+
+export function sanitizeWebhookEndpoint(endpoint: string) {
+  try {
+    const parsedUrl = new URL(endpoint);
+
+    return parsedUrl.toString();
+  } catch (err) {
+    throw new Error(
+      `Invalid webhook endpoint, expected valid URL, got "${endpoint}"`,
+    );
+  }
 }
