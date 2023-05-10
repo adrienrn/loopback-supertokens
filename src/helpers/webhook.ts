@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import crypto from 'crypto';
 import type {
   User,
@@ -26,18 +26,21 @@ export function dispatchWebhookEvent(
         [options.signatureHeaderKey]: `t=${timestamp} v1=${signature}`,
       },
     })
-    .catch((err) => {
-      let message = err.message;
+    .catch((err: AxiosError) => {
+      let message = err.response.statusText;
       if (
         err.response.data &&
+        // @ts-ignore
         err.response.data.error &&
+        // @ts-ignore
         err.response.data.error.message
       ) {
+        // @ts-ignore
         message = err.response.data.error.message;
       }
 
       throw new Error(
-        `Webhook failed: status="${err.code}" message="${message}"`,
+        `Webhook failed: status="${err.response.status}" message="${message}"`,
       );
     });
 }
