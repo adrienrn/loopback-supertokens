@@ -20,6 +20,7 @@ describe('helpers > webhook', () => {
       await dispatchWebhookEvent(mockWebhookEvent, {
         endpoint: 'https://example.com/webhook',
         secret: 'testkey',
+        signatureHeaderKey: 'webhook-signature',
       });
 
       sinon.assert.calledOnce(axiosPost);
@@ -47,6 +48,7 @@ describe('helpers > webhook', () => {
         await dispatchWebhookEvent(mockWebhookEvent, {
           endpoint: 'https://example.com/webhook',
           secret: 'testkey',
+          signatureHeaderKey: 'webhook-signature',
         });
       } catch (err) {
         expect(err.message).to.be.eql(

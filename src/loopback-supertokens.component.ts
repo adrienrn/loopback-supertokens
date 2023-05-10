@@ -16,6 +16,9 @@ export class SupertokensComponent implements Component {
     Binding.bind(
       'loopback-supertokens.webhook-signature-interceptor',
     ).toProvider(WebhookSignatureInterceptorProvider),
+    Binding.bind('loopback-supertokens.webhook-signature-header-key').to(
+      'webhook-signature',
+    ),
     Binding.bind('loopback-supertokens.webhook-signature-secret').to('banana'),
   ];
 
