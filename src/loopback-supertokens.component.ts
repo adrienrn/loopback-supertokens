@@ -3,11 +3,12 @@ import { AuthorizationTags } from '@loopback/authorization';
 import { Binding, Component, CoreBindings, inject } from '@loopback/core';
 import { RestApplication } from '@loopback/rest';
 import { middleware } from 'supertokens-node/framework/loopback';
+import { SupertokensInternalWebhookAuthenticationStrategy } from './authentication-strategies/supertokens-internal-webhook.strategy';
 import { SuperTokensInternalAuthenticationStrategy } from './authentication-strategies/supertokens-internal.strategy';
 import { SuperTokensAuthenticationStrategy } from './authentication-strategies/supertokens.strategy';
+import { LoopbackSupertokensBindings } from './keys';
 import { SuperTokensRBACAuthorizeProvider } from './providers/supertokens-rbac-authorize.provider';
 import { WebhookSignatureInterceptorProvider } from './providers/webhook-signature-interceptor.provider';
-import { LoopbackSupertokensBindings } from './keys';
 
 export class SupertokensComponent implements Component {
   bindings: Binding[] = [
@@ -50,6 +51,10 @@ export class SupertokensComponent implements Component {
     registerAuthenticationStrategy(
       app,
       SuperTokensInternalAuthenticationStrategy,
+    );
+    registerAuthenticationStrategy(
+      app,
+      SupertokensInternalWebhookAuthenticationStrategy,
     );
   }
 }
