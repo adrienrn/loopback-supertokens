@@ -6,12 +6,17 @@ import { middleware } from 'supertokens-node/framework/loopback';
 import { SuperTokensInternalAuthenticationStrategy } from './authentication-strategies/supertokens-internal.strategy';
 import { SuperTokensAuthenticationStrategy } from './authentication-strategies/supertokens.strategy';
 import { SuperTokensRBACAuthorizeProvider } from './providers/supertokens-rbac-authorize.provider';
+import { WebhookSignatureInterceptorProvider } from './providers/webhook-signature-interceptor.provider';
 
 export class SupertokensComponent implements Component {
   bindings: Binding[] = [
     Binding.bind('loopback-supertokens.rbac-authorizer-provider')
       .toProvider(SuperTokensRBACAuthorizeProvider)
       .tag(AuthorizationTags.AUTHORIZER),
+    Binding.bind(
+      'loopback-supertokens.webhook-signature-interceptor',
+    ).toProvider(WebhookSignatureInterceptorProvider),
+    Binding.bind('loopback-supertokens.webhook-signature-secret').to('banana'),
   ];
 
   constructor(@inject(CoreBindings.APPLICATION_INSTANCE) app: RestApplication) {
