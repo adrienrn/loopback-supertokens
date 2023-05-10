@@ -1,5 +1,5 @@
-import { HttpErrors, Request } from '@loopback/rest';
-import { computeEventSignature } from '../helpers';
+import type { Request } from '@loopback/rest';
+import { computeEventSignature } from './computeEventSignature';
 import { parseSignatureHeader } from './parseSignatureHeader';
 
 export function verifyForRequest(

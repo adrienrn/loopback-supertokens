@@ -1,12 +1,8 @@
 import axios, { AxiosError } from 'axios';
-import crypto from 'crypto';
-import type {
-  User,
-  UserSignInEvent,
-  UserSignUpEvent,
-  WebhookEvent,
-} from '../types';
+import type { User, UserSignInEvent, UserSignUpEvent } from '../types';
 import { WEBHOOK_EVENT_TYPE } from '../types';
+import { computeEventSignature } from '../utils/computeEventSignature';
+import { sanitizeWebhookEndpoint } from '../utils/sanitizeWebhookEndpoint';
 
 export function dispatchWebhookEvent(
   event: UserSignInEvent | UserSignUpEvent,
@@ -65,27 +61,4 @@ export function createUserSignUpEvent(data: { user: User }): UserSignUpEvent {
     },
     type: WEBHOOK_EVENT_TYPE.USER__SIGN_UP,
   };
-}
-
-export function computeEventSignature(
-  event: WebhookEvent<unknown>,
-  timestamp: number,
-  secret: string,
-) {
-  return crypto
-    .createHmac('sha256', secret)
-    .update(`${timestamp}.${JSON.stringify(event)}`)
-    .digest('base64');
-}
-
-export function sanitizeWebhookEndpoint(endpoint: string) {
-  try {
-    const parsedUrl = new URL(endpoint);
-
-    return parsedUrl.toString();
-  } catch (err) {
-    throw new Error(
-      `Invalid webhook endpoint, expected valid URL, got "${endpoint}"`,
-    );
-  }
 }

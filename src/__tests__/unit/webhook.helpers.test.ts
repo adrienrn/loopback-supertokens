@@ -1,11 +1,9 @@
 import { expect, sinon } from '@loopback/testlab';
 import axios, { AxiosError } from 'axios';
-import {
-  computeEventSignature,
-  dispatchWebhookEvent,
-  sanitizeWebhookEndpoint,
-} from '../../helpers/webhook';
+import { dispatchWebhookEvent } from '../../helpers/webhook';
 import { WEBHOOK_EVENT_TYPE } from '../../types';
+import { computeEventSignature } from '../../utils/computeEventSignature';
+import { sanitizeWebhookEndpoint } from '../../utils/sanitizeWebhookEndpoint';
 
 describe('helpers > webhook', () => {
   const mockWebhookEvent = {
