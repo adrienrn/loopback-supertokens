@@ -8,6 +8,8 @@ import type {
 } from '../types';
 import { WEBHOOK_EVENT_TYPE } from '../types';
 
+const WEBHOOK_SIGNATURE_HEADER_KEY = 'webhook-signature';
+
 export function dispatchWebhookEvent(
   event: UserSignInEvent | UserSignUpEvent,
   options: {
@@ -22,12 +24,21 @@ export function dispatchWebhookEvent(
   return axios
     .post(sanitiziedEndpoint, event, {
       headers: {
-        'Webhook-Signature': `t=${timestamp} v1=${signature}`,
+        [WEBHOOK_SIGNATURE_HEADER_KEY]: `t=${timestamp} v1=${signature}`,
       },
     })
     .catch((err) => {
+      let message = err.message;
+      if (
+        err.response.data &&
+        err.response.data.error &&
+        err.response.data.error.message
+      ) {
+        message = err.response.data.error.message;
+      }
+
       throw new Error(
-        `Webhook failed: status="${err.code}" message="${err.message}"`,
+        `Webhook failed: status="${err.code}" message="${message}"`,
       );
     });
 }
