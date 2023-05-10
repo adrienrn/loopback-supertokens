@@ -7,19 +7,26 @@ import { SuperTokensInternalAuthenticationStrategy } from './authentication-stra
 import { SuperTokensAuthenticationStrategy } from './authentication-strategies/supertokens.strategy';
 import { SuperTokensRBACAuthorizeProvider } from './providers/supertokens-rbac-authorize.provider';
 import { WebhookSignatureInterceptorProvider } from './providers/webhook-signature-interceptor.provider';
+import { LoopbackSupertokensBindings } from './keys';
 
 export class SupertokensComponent implements Component {
   bindings: Binding[] = [
-    Binding.bind('loopback-supertokens.rbac-authorizer-provider')
+    // Global register role-based access control authorizer:
+    Binding.bind(LoopbackSupertokensBindings.AUTHORIZATION_RBAC_AUTHORIZER)
       .toProvider(SuperTokensRBACAuthorizeProvider)
       .tag(AuthorizationTags.AUTHORIZER),
+    // Interceptor for webhook endpoint to verify the request signature:
     Binding.bind(
-      'loopback-supertokens.webhook-signature-interceptor',
+      LoopbackSupertokensBindings.WEBHOOK_SIGNATURE_INTERCEPTOR,
     ).toProvider(WebhookSignatureInterceptorProvider),
-    Binding.bind('loopback-supertokens.webhook-signature-header-key').to(
+    // Header that is expected to be set on webhook requests:
+    Binding.bind(LoopbackSupertokensBindings.WEBHOOK_SIGNATURE_HEADER_KEY).to(
       'webhook-signature',
     ),
-    Binding.bind('loopback-supertokens.webhook-signature-secret').to('banana'),
+    // Encryption key used to sign webhook requests:
+    Binding.bind(LoopbackSupertokensBindings.WEBHOOK_SIGNATURE_SECRET).to(
+      'flying.microtonal.banana',
+    ),
   ];
 
   constructor(@inject(CoreBindings.APPLICATION_INSTANCE) app: RestApplication) {

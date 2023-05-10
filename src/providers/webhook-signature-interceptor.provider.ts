@@ -5,8 +5,9 @@ import {
   Provider,
   inject,
 } from '@loopback/core';
-import { HttpErrors } from '@loopback/rest';
+import { HttpErrors, RestBindings } from '@loopback/rest';
 import { computeEventSignature } from '../helpers';
+import { LoopbackSupertokensBindings } from '../keys';
 
 export class WebhookSignatureInterceptorProvider
   implements Provider<Interceptor>
@@ -15,11 +16,11 @@ export class WebhookSignatureInterceptorProvider
     'Webhook request malformed, missing or invalid signature';
 
   constructor(
-    @inject('loopback-supertokens.webhook-signature-header-key')
+    @inject(LoopbackSupertokensBindings.WEBHOOK_SIGNATURE_HEADER_KEY)
     private webhookSignatureHeaderKey: string,
-    @inject('loopback-supertokens.webhook-signature-secret')
+    @inject(LoopbackSupertokensBindings.WEBHOOK_SIGNATURE_SECRET)
     private webhookSignatureSecret: string,
-    private debug = false,
+    private debug = true,
   ) {}
 
   value() {
@@ -27,7 +28,7 @@ export class WebhookSignatureInterceptorProvider
   }
 
   async intercept(invocationCtx: InvocationContext, next: Next) {
-    const request = (invocationCtx.target as any).request;
+    const request = await invocationCtx.get(RestBindings.Http.REQUEST);
 
     let givenSignature;
     try {
