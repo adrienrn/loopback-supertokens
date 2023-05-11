@@ -148,11 +148,7 @@ describe('SupertokensWebhookHelper', () => {
     it('Computes correct signature for tuple (event, timestamp, secret)', () => {
       const expectedSignature = 'YVDHA/tG6mDid95MtrBpcc4+RegJ7WpMpQlGQIekcQc=';
       expect(
-        webhookHelper.computeEventSignature(
-          mockWebhookEvent,
-          1683561413,
-          'testkey',
-        ),
+        webhookHelper.computeEventSignature(mockWebhookEvent, 1683561413),
       ).to.eql(expectedSignature);
 
       expect(
@@ -162,7 +158,6 @@ describe('SupertokensWebhookHelper', () => {
             type: WEBHOOK_EVENT_TYPE.USER__SIGN_UP,
           },
           1683561413,
-          'testkey',
         ),
       ).to.not.eql(expectedSignature);
 
@@ -170,16 +165,15 @@ describe('SupertokensWebhookHelper', () => {
         webhookHelper.computeEventSignature(
           mockWebhookEvent,
           1683561634, // <- different timestamp
-          'testkey',
         ),
       ).to.not.eql(expectedSignature);
 
+      const otherWebhookHelper = new SupertokensWebhookHelper(
+        'othertestkey',
+        'webhook-signature',
+      );
       expect(
-        webhookHelper.computeEventSignature(
-          mockWebhookEvent,
-          1683561413,
-          'othertestkey', // <- different key
-        ),
+        otherWebhookHelper.computeEventSignature(mockWebhookEvent, 1683561413),
       ).to.not.eql(expectedSignature);
     });
   });

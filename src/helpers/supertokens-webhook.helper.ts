@@ -1,15 +1,15 @@
-import axios, { AxiosError } from 'axios';
+import { inject } from '@loopback/core';
+import axios, { AxiosError, AxiosResponse } from 'axios';
 import crypto from 'crypto';
+import { LoopbackSupertokensBindings } from '../keys';
 import type {
-  User,
   UserSignInEvent,
   UserSignUpEvent,
   WebhookEvent,
+  WebhookEventUserInterface,
 } from '../types';
 import { WEBHOOK_EVENT_TYPE } from '../types';
 import { sanitizeWebhookEndpoint } from '../utils/sanitizeWebhookEndpoint';
-import { inject } from '@loopback/core';
-import { LoopbackSupertokensBindings } from '../keys';
 
 export class SupertokensWebhookHelper {
   constructor(
@@ -17,42 +17,18 @@ export class SupertokensWebhookHelper {
     private webhookSignatureSecret: string,
     @inject(LoopbackSupertokensBindings.WEBHOOK_SIGNATURE_HEADER_KEY)
     private webhookSignatureHeaderKey: string,
+    @inject(LoopbackSupertokensBindings.WEBHOOK_EVENT_EXPIRY)
+    private eventExpiryInSeconds: number = 180,
   ) {}
 
-  static createUserSignInEvent(data: { user: User }): UserSignInEvent {
-    return {
-      data: {
-        user: {
-          id: data.user.id,
-        },
-      },
-      type: WEBHOOK_EVENT_TYPE.USER__SIGN_IN,
-    };
-  }
-
-  static createUserSignUpEvent(data: { user: User }): UserSignUpEvent {
-    return {
-      data: {
-        user: {
-          id: data.user.id,
-        },
-      },
-      type: WEBHOOK_EVENT_TYPE.USER__SIGN_UP,
-    };
-  }
-
   async dispatchWebhookEvent(
-    event: UserSignInEvent | UserSignUpEvent,
+    event: WebhookEvent,
     options: {
       endpoint: string;
     },
   ) {
     const timestamp = new Date().getTime();
-    const signature = this.computeEventSignature(
-      event,
-      timestamp,
-      this.webhookSignatureSecret,
-    );
+    const signature = this.computeEventSignature(event, timestamp);
 
     const sanitiziedEndpoint = sanitizeWebhookEndpoint(options.endpoint);
     return axios
@@ -83,18 +59,14 @@ export class SupertokensWebhookHelper {
       });
   }
 
-  computeEventSignature(
-    event: WebhookEvent<unknown>,
-    timestamp: number,
-    secret: string,
-  ) {
+  computeEventSignature(event: WebhookEvent, timestamp: number) {
     return crypto
-      .createHmac('sha256', secret)
+      .createHmac('sha256', this.webhookSignatureSecret)
       .update(`${timestamp}.${JSON.stringify(event)}`)
       .digest('base64');
   }
 
-  verifyEventSignature(event: WebhookEvent<unknown>, signatureHeader: string) {
+  verifyEventSignature(event: WebhookEvent, signatureHeader: string) {
     let givenSignature;
     try {
       givenSignature = this.parseSignatureHeader(signatureHeader);
@@ -107,7 +79,10 @@ export class SupertokensWebhookHelper {
 
     const timestamp = new Date().getTime();
 
-    if (givenSignature.timestamp + 180 * 1000 < timestamp) {
+    if (
+      timestamp - givenSignature.timestamp >
+      this.eventExpiryInSeconds * 1000
+    ) {
       // Expired after N minutes, protects against replay attacks.
       throw new Error('Webhook request malformed, expired signature header');
     }
@@ -115,7 +90,6 @@ export class SupertokensWebhookHelper {
     const expectedSignature = this.computeEventSignature(
       event,
       givenSignature.timestamp,
-      this.webhookSignatureSecret,
     );
 
     if (expectedSignature !== givenSignature.value) {
@@ -125,6 +99,10 @@ export class SupertokensWebhookHelper {
     }
 
     return expectedSignature;
+  }
+
+  getEventFactory() {
+    return new WebhookEventFactory();
   }
 
   parseSignatureHeader(rawHeaderString) {
@@ -150,6 +128,34 @@ export class SupertokensWebhookHelper {
     return {
       value: tokens['v1'],
       timestamp: parseInt(tokens['t']),
+    };
+  }
+}
+
+export class WebhookEventFactory {
+  createUserSignInEvent(data: {
+    user: WebhookEventUserInterface;
+  }): UserSignInEvent {
+    return {
+      data: {
+        user: {
+          id: data.user.id,
+        },
+      },
+      type: WEBHOOK_EVENT_TYPE.USER__SIGN_IN,
+    };
+  }
+
+  createUserSignUpEvent(data: {
+    user: WebhookEventUserInterface;
+  }): UserSignUpEvent {
+    return {
+      data: {
+        user: {
+          id: data.user.id,
+        },
+      },
+      type: WEBHOOK_EVENT_TYPE.USER__SIGN_UP,
     };
   }
 }

@@ -2,6 +2,9 @@ export namespace LoopbackSupertokensBindings {
   export const AUTHORIZATION_RBAC_AUTHORIZER =
     'loopback-supertokens.authorization.rbac-authorizer';
 
+  export const WEBHOOK_EVENT_EXPIRY =
+    'loopback-supertokens.webhook.event-expiry';
+
   export const WEBHOOK_SIGNATURE_INTERCEPTOR =
     'loopback-supertokens.webhook.signature-interceptor';
 
