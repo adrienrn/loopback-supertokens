@@ -42,12 +42,21 @@ export class SupertokensInternalWebhookAuthenticationStrategy
       this.request,
     );
 
+    const signatureHeader =
+      this.request.headers[this.webhookSignatureHeaderKey];
+
     let expectedSignature;
     try {
-      expectedSignature = verifyForRequest(this.request, {
-        secret: this.webhookSignatureSecret,
-        signatureHeaderKey: this.webhookSignatureHeaderKey,
-      });
+      expectedSignature = verifyForRequest(
+        this.request.body,
+        Array.isArray(signatureHeader)
+          ? signatureHeader.shift()
+          : signatureHeader,
+        {
+          secret: this.webhookSignatureSecret,
+          signatureHeaderKey: this.webhookSignatureHeaderKey,
+        },
+      );
     } catch (err) {
       throw new HttpErrors.Unauthorized(this.debug ? err.message : null);
     }

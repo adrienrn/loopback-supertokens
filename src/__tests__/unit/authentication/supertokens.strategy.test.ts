@@ -3,7 +3,7 @@ import { RestBindings } from '@loopback/rest';
 import { expect, sinon } from '@loopback/testlab';
 import { Error as SuperTokensError } from 'supertokens-node';
 import Session from 'supertokens-node/recipe/session';
-import { SuperTokensAuthenticationStrategy } from '../../authentication/supertokens.strategy';
+import { SuperTokensAuthenticationStrategy } from '../../../authentication/supertokens.strategy';
 
 describe('SuperTokensAuthenticationStrategy', () => {
   let context: Context;

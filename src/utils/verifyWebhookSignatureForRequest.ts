@@ -1,9 +1,10 @@
-import type { Request } from '@loopback/rest';
+import { WebhookEvent } from '../types';
 import { computeEventSignature } from './computeEventSignature';
 import { parseSignatureHeader } from './parseSignatureHeader';
 
 export function verifyForRequest(
-  request: Request,
+  body: WebhookEvent<unknown>,
+  signatureHeader: string,
   options: {
     signatureHeaderKey: string;
     secret: string;
@@ -11,12 +12,12 @@ export function verifyForRequest(
 ) {
   let givenSignature;
   try {
-    givenSignature = parseSignatureHeader(
-      request.headers[options.signatureHeaderKey],
-    );
+    givenSignature = parseSignatureHeader(signatureHeader);
   } catch (err) {
-    // Missing signature header altogether, can't authentify the message.
-    throw new Error('Webhook request malformed, missing signature header');
+    // Invalid/missing signature header, can't authentify the message.
+    throw new Error(
+      'Webhook request malformed, missing or invalid signature header',
+    );
   }
 
   const timestamp = new Date().getTime();
@@ -27,7 +28,7 @@ export function verifyForRequest(
   }
 
   const expectedSignature = computeEventSignature(
-    request.body,
+    body,
     givenSignature.timestamp,
     options.secret,
   );

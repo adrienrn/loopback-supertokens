@@ -30,11 +30,18 @@ export class WebhookSignatureInterceptorProvider
   async intercept(invocationCtx: InvocationContext, next: Next) {
     const request = await invocationCtx.get(RestBindings.Http.REQUEST);
 
+    const signatureHeader = request.headers[this.webhookSignatureHeaderKey];
     try {
-      verifyForRequest(request, {
-        secret: this.webhookSignatureSecret,
-        signatureHeaderKey: this.webhookSignatureHeaderKey,
-      });
+      verifyForRequest(
+        request.body,
+        Array.isArray(signatureHeader)
+          ? signatureHeader.shift()
+          : signatureHeader,
+        {
+          secret: this.webhookSignatureSecret,
+          signatureHeaderKey: this.webhookSignatureHeaderKey,
+        },
+      );
     } catch (err) {
       throw new HttpErrors.Unauthorized(this.debug ? err.message : null);
     }
