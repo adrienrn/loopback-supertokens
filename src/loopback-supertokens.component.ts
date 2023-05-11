@@ -3,12 +3,12 @@ import { AuthorizationTags } from '@loopback/authorization';
 import { Binding, Component, CoreBindings, inject } from '@loopback/core';
 import { RestApplication } from '@loopback/rest';
 import { middleware } from 'supertokens-node/framework/loopback';
-import { SupertokensInternalWebhookAuthenticationStrategy } from './authentication-strategies/supertokens-internal-webhook.strategy';
-import { SuperTokensInternalAuthenticationStrategy } from './authentication-strategies/supertokens-internal.strategy';
-import { SuperTokensAuthenticationStrategy } from './authentication-strategies/supertokens.strategy';
+import { SupertokensInternalWebhookAuthenticationStrategy } from './authentication/supertokens-internal-webhook.strategy';
+import { SuperTokensInternalAuthenticationStrategy } from './authentication/supertokens-internal.strategy';
+import { SuperTokensAuthenticationStrategy } from './authentication/supertokens.strategy';
 import { LoopbackSupertokensBindings } from './keys';
-import { SuperTokensRBACAuthorizeProvider } from './providers/supertokens-rbac-authorize.provider';
-import { WebhookSignatureInterceptorProvider } from './providers/webhook-signature-interceptor.provider';
+import { SuperTokensRBACAuthorizeProvider } from './authorization/supertokens-rbac-authorize.provider';
+import { WebhookSignatureInterceptorProvider } from './authentication/webhook-signature-interceptor.provider';
 
 export class SupertokensComponent implements Component {
   bindings: Binding[] = [

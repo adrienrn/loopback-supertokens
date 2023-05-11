@@ -8,7 +8,7 @@ import {
 import Session from 'supertokens-node/recipe/session';
 import { TestApplication } from '../fixtures/test-app/application';
 import { configureSupertokens } from '../fixtures/test-app/supertokens.config';
-import { SuperTokensRBACAuthorizeProvider } from '../../providers/supertokens-rbac-authorize.provider';
+import { SuperTokensRBACAuthorizeProvider } from '../../authorization/supertokens-rbac-authorize.provider';
 
 describe('@authorize w/ SuperTokensRBACAuthorizeProvider', () => {
   let app: TestApplication;

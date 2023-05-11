@@ -1,8 +1,7 @@
 import { expect, sinon } from '@loopback/testlab';
 import axios, { AxiosError } from 'axios';
-import { SupertokensWebhookHelper } from '../../helpers/supertokens-webhook.helper';
-import { WEBHOOK_EVENT_TYPE } from '../../types';
-import { computeEventSignature } from '../../utils/computeEventSignature';
+import { SupertokensWebhookHelper } from '../../../helpers/supertokens-webhook.helper';
+import { WEBHOOK_EVENT_TYPE } from '../../../types';
 
 describe('SupertokensWebhookHelper', () => {
   const mockWebhookEvent = {
