@@ -10,7 +10,7 @@ import {
 } from '@loopback/rest';
 import { UserProfile, securityId } from '@loopback/security';
 import { LoopbackSupertokensBindings } from '../keys';
-import { verifyForRequest } from '../utils/verifyWebhookSignatureForRequest';
+import { SupertokensWebhookHelper } from '../helpers/supertokens-webhook.helper';
 
 export class SupertokensInternalWebhookAuthenticationStrategy
   implements AuthenticationStrategy
@@ -26,10 +26,10 @@ export class SupertokensInternalWebhookAuthenticationStrategy
     @inject(RestBindings.REQUEST_BODY_PARSER)
     private requestBodyParser: RequestBodyParser,
     @inject(RestBindings.Http.REQUEST) private request: Request,
+    @inject(LoopbackSupertokensBindings.WEBHOOK_HELPER_SERVICE)
+    private webhookHelper: SupertokensWebhookHelper /* TODO interface */,
     @inject(LoopbackSupertokensBindings.WEBHOOK_SIGNATURE_HEADER_KEY)
     private webhookSignatureHeaderKey: string,
-    @inject(LoopbackSupertokensBindings.WEBHOOK_SIGNATURE_SECRET)
-    private webhookSignatureSecret: string,
     private debug = true,
   ) {}
 
@@ -47,15 +47,11 @@ export class SupertokensInternalWebhookAuthenticationStrategy
 
     let expectedSignature;
     try {
-      expectedSignature = verifyForRequest(
+      expectedSignature = this.webhookHelper.verifyEventSignature(
         this.request.body,
         Array.isArray(signatureHeader)
           ? signatureHeader.shift()
           : signatureHeader,
-        {
-          secret: this.webhookSignatureSecret,
-          signatureHeaderKey: this.webhookSignatureHeaderKey,
-        },
       );
     } catch (err) {
       throw new HttpErrors.Unauthorized(this.debug ? err.message : null);

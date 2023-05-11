@@ -9,6 +9,7 @@ import { SuperTokensAuthenticationStrategy } from './authentication/supertokens.
 import { LoopbackSupertokensBindings } from './keys';
 import { SuperTokensRBACAuthorizeProvider } from './authorization/supertokens-rbac-authorize.provider';
 import { WebhookSignatureInterceptorProvider } from './authentication/webhook-signature-interceptor.provider';
+import { SupertokensWebhookHelper } from './helpers/supertokens-webhook.helper';
 
 export class SupertokensComponent implements Component {
   bindings: Binding[] = [
@@ -27,6 +28,9 @@ export class SupertokensComponent implements Component {
     // Encryption key used to sign webhook requests:
     Binding.bind(LoopbackSupertokensBindings.WEBHOOK_SIGNATURE_SECRET).to(
       'flying.microtonal.banana',
+    ),
+    Binding.bind(LoopbackSupertokensBindings.WEBHOOK_HELPER_SERVICE).toClass(
+      SupertokensWebhookHelper,
     ),
   ];
 

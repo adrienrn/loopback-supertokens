@@ -10,4 +10,7 @@ export namespace LoopbackSupertokensBindings {
 
   export const WEBHOOK_SIGNATURE_SECRET =
     'loopback-supertokens.webhook.signature-secret';
+
+  export const WEBHOOK_HELPER_SERVICE =
+    'loopback-supertokens.webhook.helper_service';
 }
