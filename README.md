@@ -142,14 +142,6 @@ Regardless if you use the managed service or self-hosted deployment, SuperTokens
 
 Yet, it would be nice to be able to express the relationship between a `Playlist` entity and its owner, i.e. a `User` entity, leverage Loopback features to their fullest (inclusion resolvers and repositories) and ensure foreign key constraints in the database. This is a fairly typical use case where one service needs to tap into the logic (subscribe) of another service and replicate parts of its data.
 
-`loopback-supertokens` promotes a webhook pattern that integrates with SuperTokens' _post_ callbacks such as `signUpPost` and `signInPost` and lets us handle the request the Loopback way. [Read more on "Why a webhook pattern?"](#why-webhooks) below.
-
-1. With SuperTokens `signUpPost` callback and `SupertokensWebhookHelper` class provided by `loopback-supertokens`, we dispatch an event to a webhook endpoint;
-1. Our webhook endpoint receives said event and use `SupertokensWebhookHelper` to verify the authenticity of the request/event;
-1. We persist the user to our database;
-
-### Prepare entities
-
 ```ts
 import { Entity, model, property } from '@loopback/repository';
 
@@ -203,20 +195,32 @@ export class Playlist extends Entity {
 }
 ```
 
+`loopback-supertokens` promotes a webhook pattern that integrates with SuperTokens' _post_ callbacks such as `signUpPost` and `signInPost` and lets us handle the request the Loopback way. [Read more on "Why a webhook pattern?"](#why-webhooks) below.
+
+1. With SuperTokens `signUpPost` callback and `SupertokensWebhookHelper` class provided by `loopback-supertokens`, we dispatch an event to a webhook endpoint;
+1. Our webhook endpoint receives said event and use `SupertokensWebhookHelper` to verify the authenticity of the request/event;
+1. We persist the user to our database;
+
 ### Dispatch the webhook
+
+**Most of the following code is from [SuperTokens "Post sign up callbacks" documentation](https://supertokens.com/docs/emailpassword/common-customizations/handling-signup-success#2-on-the-backend).**
 
 ```ts
 import { SupertokensWebhookHelper } from 'loopback-supertokens';
 // ...
 
+// Use `.env` to declare these:
+const WEBHOOK_SIGNATURE_SECRET = 'flying microtonal banana';
+const WEBHOOK_SIGNATURE_HEADER_KEY = 'webhook-signature';
+const WEBHOOK_ENDPOINT_URL = 'http://localhost:9000/authentication/webhook';
+
 const webhookHelper = new SupertokensWebhookHelper(
-  'flying microtonal banana' /* signature key */,
-  'webhook-signature' /* signature header name */,
+  WEBHOOK_SIGNATURE_SECRET,
+  WEBHOOK_SIGNATURE_HEADER_KEY,
 );
 
 supertokens.init({
-  appInfo,
-  framework: 'loopback',
+  // ...
   recipeList: [
     EmailPassword.init({
       override: {
@@ -231,7 +235,6 @@ supertokens.init({
               // First we call the original implementation of signUpPOST.
               const response = await apiImplementation.signUpPOST(input);
 
-              // Post sign up response, we check if it was successful
               if (response.status === 'OK') {
                 // Create an event to dispatch based on the response:
                 const userSignUpEvent = webhookHelper
@@ -241,7 +244,7 @@ supertokens.init({
                 // Dispatch the event:
                 webhookHelper
                   .dispatchWebhookEvent(userSignUpEvent, {
-                    'http://localhost:9000/authentication/webhook'
+                    WEBHOOK_ENDPOINT_URL,
                   })
                   .catch((err: Error) => {
                     console.error(err);
@@ -254,16 +257,17 @@ supertokens.init({
         },
       },
     }),
-    Session.init(),
-    UserRoles.init(),
+    // ...
   ],
-  supertokens: {
-    connectionURI: 'https://try.supertokens.io',
-  },
+  // ...
 });
 ```
 
 ### Write the webhook endpoint
+
+The key bit here is to write a controller that matches the endpoint hit by the callback. You can use `lb4 controller` for this.
+
+Another important aspect is to use `@authenticate('supertokens-internal-webhook')` to protect the endpoint, enforce signature verification and replay attack protection. This is provided by `loopback-supertokens`. Read [more about webhook signature](#more-about-webhook-signature) below.
 
 ```ts
 import { authenticate } from '@loopback/authentication';
@@ -297,7 +301,11 @@ export class WebhookController {
 
 ### Why webhooks?
 
+-
+
 ### More about webhook signature
+
+-
 
 # Why SuperTokens?
 
