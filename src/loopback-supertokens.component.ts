@@ -29,6 +29,8 @@ export class SupertokensComponent implements Component {
     Binding.bind(LoopbackSupertokensBindings.WEBHOOK_SIGNATURE_SECRET).to(
       'flying.microtonal.banana',
     ),
+    // Default time in seconds an event is still valid (replay attacks protection):
+    Binding.bind(LoopbackSupertokensBindings.WEBHOOK_EVENT_EXPIRY).to(180),
     Binding.bind(LoopbackSupertokensBindings.WEBHOOK_HELPER_SERVICE).toClass(
       SupertokensWebhookHelper,
     ),
