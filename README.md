@@ -51,13 +51,13 @@ import { authenticate } from '@loopback/authentication';
 // ...
 
 // Use @authenticate('supertokens') here if all methods should be protected.
-export class TeamController {
+export class PlaylistController {
   @authenticate('supertokens')
-  @get('/teams/{id}' /* ... */)
+  @get('/playlists/{id}' /* ... */)
   async find(
     @param.path.number('id') id: number,
     @param.query.object('filter') filter?: Filter<Team>,
-  ): Promise<Team> {
+  ): Promise<Playlist> {
     return this.repository.findById(id, filter);
   }
 
@@ -133,6 +133,171 @@ See also:
 
 - https://github.com/loopbackio/loopback-next/discussions/8905
 - https://github.com/loopbackio/loopback-next/tree/0ece5e7f0113dcc070ba44210c472257f8bd0e93/packages/rest-crud#creating-a-crud-controller
+
+## Communication with Loopback
+
+Let's say your app is about users creating cool playlists.
+
+Regardless if you use the managed service or self-hosted deployment, SuperTokens is an independant authentication service, separate from your app handling user sign-up, sign-in, sign-out, and other authentication-related tasks and storing users data in a separate database. It is quite a sensible pattern for services to be split up into smaller, more manageable, isolated/independant components.
+
+Yet, it would be nice to be able to express the relationship between a `Playlist` entity and its owner, i.e. a `User` entity, leverage Loopback features to their fullest (inclusion resolvers and repositories) and ensure foreign key constraints in the database. This is a fairly typical use case where one service needs to tap into the logic (subscribe) of another service and replicate parts of its data.
+
+`loopback-supertokens` promotes a webhook pattern that integrates with SuperTokens' _post_ callbacks such as `signUpPost` and `signInPost` and lets us handle the request the Loopback way. [Read more on "Why a webhook pattern?"](#why-webhooks) below.
+
+1. With SuperTokens `signUpPost` callback and `SupertokensWebhookHelper` class provided by `loopback-supertokens`, we dispatch an event to a webhook endpoint;
+1. Our webhook endpoint receives said event and use `SupertokensWebhookHelper` to verify the authenticity of the request/event;
+1. We persist the user to our database;
+
+### Prepare entities
+
+```ts
+import { Entity, model, property } from '@loopback/repository';
+
+@model()
+export class User extends Entity {
+  @property({
+    id: true,
+    type: 'string',
+  })
+  id: string;
+
+  constructor(data?: Partial<User>) {
+    super(data);
+  }
+}
+
+@model({
+  settings: {
+    foreignKeys: {
+      fk_Playlist_User: {
+        name: 'fk_Playlist_User',
+        entity: 'User',
+        entityKey: 'id',
+        foreignKey: 'userid',
+      },
+    },
+  },
+})
+export class Playlist extends Entity {
+  @property({
+    generated: true,
+    id: true,
+    type: 'number',
+  })
+  id: number;
+
+  @property({
+    required: true,
+    type: 'string',
+  })
+  name: string;
+
+  @belongsTo(() => User, undefined, {
+    required: true,
+  })
+  userId: string;
+
+  constructor(data?: Partial<Playlist>) {
+    super(data);
+  }
+}
+```
+
+### Dispatch the webhook
+
+```ts
+import { SupertokensWebhookHelper } from 'loopback-supertokens';
+// ...
+
+const webhookHelper = new SupertokensWebhookHelper(
+  'flying microtonal banana' /* signature key */,
+  'webhook-signature' /* signature header name */,
+);
+
+supertokens.init({
+  appInfo,
+  framework: 'loopback',
+  recipeList: [
+    EmailPassword.init({
+      override: {
+        apis: (apiImplementation) => {
+          return {
+            ...apiImplementation,
+            signUpPOST: async (input) => {
+              if (!apiImplementation.signUpPOST) {
+                throw new Error('Should never happen');
+              }
+
+              // First we call the original implementation of signUpPOST.
+              const response = await apiImplementation.signUpPOST(input);
+
+              // Post sign up response, we check if it was successful
+              if (response.status === 'OK') {
+                // Create an event to dispatch based on the response:
+                const userSignUpEvent = webhookHelper
+                  .getEventFactory()
+                  .createUserSignUpEvent(response);
+
+                // Dispatch the event:
+                webhookHelper
+                  .dispatchWebhookEvent(userSignUpEvent, {
+                    'http://localhost:9000/authentication/webhook'
+                  })
+                  .catch((err: Error) => {
+                    console.error(err);
+                  });
+              }
+
+              return response;
+            },
+          };
+        },
+      },
+    }),
+    Session.init(),
+    UserRoles.init(),
+  ],
+  supertokens: {
+    connectionURI: 'https://try.supertokens.io',
+  },
+});
+```
+
+### Write the webhook endpoint
+
+```ts
+import { authenticate } from '@loopback/authentication';
+import { repository } from '@loopback/repository';
+import { post, requestBody } from '@loopback/rest';
+import { WEBHOOK_EVENT_TYPE, WebhookEvent } from 'loopback-supertokens';
+import { UserRepository } from '../../repositories';
+
+export class WebhookController {
+  constructor(
+    @repository(UserRepository)
+    protected userRepository: UserRepository,
+  ) {}
+
+  @authenticate('supertokens-internal-webhook')
+  @post('/authentication/webhook')
+  async execute(
+    @requestBody()
+    event: WebhookEvent,
+  ): Promise<void> {
+    switch (event.type) {
+      case WEBHOOK_EVENT_TYPE.USER__SIGN_UP:
+        // Create the user out of the event data/payload:
+        this.userRepository.create(event.data.user);
+
+        return;
+    }
+  }
+}
+```
+
+### Why webhooks?
+
+### More about webhook signature
 
 # Why SuperTokens?
 
