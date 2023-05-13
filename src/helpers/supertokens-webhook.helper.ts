@@ -1,7 +1,11 @@
 import { inject } from '@loopback/core';
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import crypto from 'crypto';
-import { LoopbackSupertokensBindings } from '../keys';
+import {
+  DEFAULT_WEBHOOK_EVENT_EXPIRY,
+  DEFAULT_WEBHOOK_SIGNATURE_HEADER_KEY,
+  LoopbackSupertokensBindings,
+} from '../keys';
 import type {
   UserSignInEvent,
   UserSignUpEvent,
@@ -16,9 +20,9 @@ export class SupertokensWebhookHelper {
     @inject(LoopbackSupertokensBindings.WEBHOOK_SIGNATURE_SECRET)
     private webhookSignatureSecret: string,
     @inject(LoopbackSupertokensBindings.WEBHOOK_SIGNATURE_HEADER_KEY)
-    private webhookSignatureHeaderKey: string,
+    private webhookSignatureHeaderKey: string = DEFAULT_WEBHOOK_SIGNATURE_HEADER_KEY,
     @inject(LoopbackSupertokensBindings.WEBHOOK_EVENT_EXPIRY)
-    private eventExpiryInSeconds: number = 180,
+    private eventExpiryInSeconds: number = DEFAULT_WEBHOOK_EVENT_EXPIRY,
   ) {}
 
   async dispatchWebhookEvent(

@@ -10,10 +10,7 @@ describe('SupertokensWebhookHelper', () => {
   };
 
   describe('dispatchWebhookEvent', () => {
-    const webhookHelper = new SupertokensWebhookHelper(
-      'testkey',
-      'webhook-signature',
-    );
+    const webhookHelper = new SupertokensWebhookHelper('testkey');
 
     it('Correctly sets "Webhook-Signature"', async () => {
       const axiosPost = sinon.stub(axios, 'post').resolves();
@@ -135,10 +132,7 @@ describe('SupertokensWebhookHelper', () => {
   });
 
   describe('computeEventSignature', () => {
-    const webhookHelper = new SupertokensWebhookHelper(
-      'testkey',
-      'webhook-signature',
-    );
+    const webhookHelper = new SupertokensWebhookHelper('testkey');
 
     const mockWebhookEvent = {
       data: { user: { id: 'ede4bf8e-38f8-4ff7-b07a-2836de2ba904' } },
@@ -168,10 +162,7 @@ describe('SupertokensWebhookHelper', () => {
         ),
       ).to.not.eql(expectedSignature);
 
-      const otherWebhookHelper = new SupertokensWebhookHelper(
-        'othertestkey',
-        'webhook-signature',
-      );
+      const otherWebhookHelper = new SupertokensWebhookHelper('othertestkey');
       expect(
         otherWebhookHelper.computeEventSignature(mockWebhookEvent, 1683561413),
       ).to.not.eql(expectedSignature);
@@ -179,10 +170,7 @@ describe('SupertokensWebhookHelper', () => {
   });
 
   describe('parseSignatureHeader', () => {
-    const webhookHelper = new SupertokensWebhookHelper(
-      'testkey',
-      'webhook-signature',
-    );
+    const webhookHelper = new SupertokensWebhookHelper('testkey');
 
     const expectedParsedObject = {
       timestamp: 1683810604,

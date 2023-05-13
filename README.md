@@ -211,13 +211,9 @@ import { SupertokensWebhookHelper } from 'loopback-supertokens';
 
 // Use `.env` to declare these:
 const WEBHOOK_SIGNATURE_SECRET = 'flying microtonal banana';
-const WEBHOOK_SIGNATURE_HEADER_KEY = 'webhook-signature';
 const WEBHOOK_ENDPOINT_URL = 'http://localhost:9000/authentication/webhook';
 
-const webhookHelper = new SupertokensWebhookHelper(
-  WEBHOOK_SIGNATURE_SECRET,
-  WEBHOOK_SIGNATURE_HEADER_KEY,
-);
+const webhookHelper = new SupertokensWebhookHelper(WEBHOOK_SIGNATURE_SECRET);
 
 supertokens.init({
   // ...
