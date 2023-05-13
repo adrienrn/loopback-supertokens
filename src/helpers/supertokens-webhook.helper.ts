@@ -25,16 +25,11 @@ export class SupertokensWebhookHelper {
     private eventExpiryInSeconds: number = DEFAULT_WEBHOOK_EVENT_EXPIRY,
   ) {}
 
-  async dispatchWebhookEvent(
-    event: WebhookEvent,
-    options: {
-      endpoint: string;
-    },
-  ) {
+  async dispatchWebhookEvent(endpoint: string, event: WebhookEvent) {
     const timestamp = new Date().getTime();
     const signature = this.computeEventSignature(event, timestamp);
 
-    const sanitiziedEndpoint = sanitizeWebhookEndpoint(options.endpoint);
+    const sanitiziedEndpoint = sanitizeWebhookEndpoint(endpoint);
     return axios
       .post(sanitiziedEndpoint, event, {
         headers: {

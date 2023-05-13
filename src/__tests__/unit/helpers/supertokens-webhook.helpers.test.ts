@@ -15,9 +15,10 @@ describe('SupertokensWebhookHelper', () => {
     it('Correctly sets "Webhook-Signature"', async () => {
       const axiosPost = sinon.stub(axios, 'post').resolves();
 
-      await webhookHelper.dispatchWebhookEvent(mockWebhookEvent, {
-        endpoint: 'https://example.com/webhook',
-      });
+      await webhookHelper.dispatchWebhookEvent(
+        'https://example.com/webhook',
+        mockWebhookEvent,
+      );
 
       sinon.assert.calledOnce(axiosPost);
       expect(axiosPost.getCall(0).args[0]).to.be.eql(
@@ -41,9 +42,10 @@ describe('SupertokensWebhookHelper', () => {
         .rejects(new AxiosError('Gateway Timeout (from unit test)', '504'));
 
       try {
-        await webhookHelper.dispatchWebhookEvent(mockWebhookEvent, {
-          endpoint: 'https://example.com/webhook',
-        });
+        await webhookHelper.dispatchWebhookEvent(
+          'https://example.com/webhook',
+          mockWebhookEvent,
+        );
       } catch (err) {
         expect(err.message).to.be.eql(
           'Webhook failed: status="504" message="Gateway Timeout (from unit test)"',

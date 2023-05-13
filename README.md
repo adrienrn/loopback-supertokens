@@ -239,9 +239,7 @@ supertokens.init({
 
                 // Dispatch the event:
                 webhookHelper
-                  .dispatchWebhookEvent(userSignUpEvent, {
-                    WEBHOOK_ENDPOINT_URL,
-                  })
+                  .dispatchWebhookEvent(WEBHOOK_ENDPOINT_URL, userSignUpEvent)
                   .catch((err: Error) => {
                     console.error(err);
                   });
