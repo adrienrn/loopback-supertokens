@@ -4,7 +4,6 @@ import { Binding, Component, CoreBindings, inject } from '@loopback/core';
 import { RestApplication } from '@loopback/rest';
 import { middleware } from 'supertokens-node/framework/loopback';
 import { SupertokensInternalWebhookAuthenticationStrategy } from './authentication/supertokens-internal-webhook.strategy';
-import { SuperTokensInternalAuthenticationStrategy } from './authentication/supertokens-internal.strategy';
 import { SuperTokensAuthenticationStrategy } from './authentication/supertokens.strategy';
 import {
   DEFAULT_WEBHOOK_EVENT_EXPIRY,
@@ -62,10 +61,6 @@ export class SupertokensComponent implements Component {
      *
      */
     registerAuthenticationStrategy(app, SuperTokensAuthenticationStrategy);
-    registerAuthenticationStrategy(
-      app,
-      SuperTokensInternalAuthenticationStrategy,
-    );
     registerAuthenticationStrategy(
       app,
       SupertokensInternalWebhookAuthenticationStrategy,
