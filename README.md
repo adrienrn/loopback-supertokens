@@ -2,6 +2,12 @@
 
 LoopBack extension for [SuperTokens](https://supertokens.com/).
 
+It integrates SuperTokens with Loopback:
+
+- Use `@authenticate('supertokens')` for protected endpoints;
+- Use `@authorize` for role-based access control (RBAC);
+- Use webhooks to tap into user flows and extend your application;
+
 # Setup
 
 **This assumes SuperTokens is already set up with your application. If that's not the case, you will need to install `supertokens-node` and properly initialize it with your application. Head to [SuperTokens > Docs > EmailPassword recipe > Backend](https://supertokens.com/docs/emailpassword/pre-built-ui/setup/backend) for detailed instructions.**
@@ -295,11 +301,31 @@ export class WebhookController {
 
 ### Why webhooks?
 
--
+The main reason is that Supertokens callbacks are running **outside** of Loopback. Webhooks provide a mechanism to let Supertokens communicate with Loopback and still leverage the normal Loopback workflows and tools (i.e. dependency injection, services, repositories/models).
+
+Additionally, webhooks is a common pattern used for integrating two or more systems in a loosely coupled way. As your app scales, you might split it up into smaller, more manageable, components and webhooks will be helpful then and allow for flexibility in how each component is designed and implemented.
 
 ### More about webhook signature
 
--
+Webhooks use hash-based message authentication code (HMAC) as webhook authentication method. This is, [by far, the most popular webhook authentication method out there](https://ngrok.com/blog-post/get-webhooks-secure-it-depends-a-field-guide-to-webhook-security) and if you worked with webhooks before you probably encountered this before.
+
+This library implements the [webhook signatures in a similar way as what Stripe does](https://stripe.com/docs/webhooks/signatures#verify-manually).
+
+When sending a webhook, the producer uses a secret key and HMAC to compute a hash of the message (_event_). This hash signature is sent as a custom header along with the webhook request, i.e. `webhook-signature` by default.
+
+Here's what it looks like:
+
+```
+Webhook-Signature: t=1683810604 v1=k3sYVKM84CvM8szBhNkXJbbYUgb3WRKpSdVe/wEG5EY=
+```
+
+Finally, upon receiving the webhook request, the consumer (Loopback webhook controller) computes a hash using the same shared secret key and compares it with the custom header value received. A timestamp is included to prevent replay attacks.
+
+Read more:
+
+- [Webhook Security in the Real World - Ngrok.com](https://ngrok.com/blog-post/get-webhooks-secure-it-depends-a-field-guide-to-webhook-security)
+- [What Are the Webhook Authentication Strategies? - Hookdeck.com](https://hookdeck.com/webhooks/guides/what-are-the-webhook-authentication-strategies#signature-verification)
+- [Webhook Security Best Practices - Snyk.io](https://snyk.io/blog/creating-secure-webhooks/)
 
 # Why SuperTokens?
 
