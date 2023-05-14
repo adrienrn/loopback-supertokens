@@ -103,7 +103,7 @@ export class TeamController {
 
 Refer to [Loopback authorization component](https://loopback.io/doc/en/lb4/Authorization-overview.html) for more details.
 
-## Work-around: using with `@loopback/rest-crud`
+### Work-around: using with `@loopback/rest-crud`
 
 LoopBack offers a way to generate controllers automatically which does not allow to annotate methods or controllers.
 
@@ -139,6 +139,27 @@ See also:
 
 - https://github.com/loopbackio/loopback-next/discussions/8905
 - https://github.com/loopbackio/loopback-next/tree/0ece5e7f0113dcc070ba44210c472257f8bd0e93/packages/rest-crud#creating-a-crud-controller
+
+## Getting the current user
+
+Here's a controller action that uses Loopback's dependency injection and authentication component to get the current session and make it available to the front-end. `loopback-supertokens` encapsulate Supertokens and lets you rely entirely on [Loopback's authentication component/mechanism](https://loopback.io/doc/en/lb4/Loopback-component-authentication.html).
+
+```ts
+export class AuthenticationController {
+  @authenticate('supertokens')
+  @get('/authentication/users/me')
+  async getCurrentUser(
+    @inject(SecurityBindings.USER)
+    profile: UserProfile,
+  ) {
+    return {
+      session: profile.session,
+      userId: profile.userId,
+      userDataInAccessToken: profile.userDataInAccessToken,
+    };
+  }
+}
+```
 
 ## Communication with Loopback
 
