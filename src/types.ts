@@ -1,3 +1,11 @@
+import { UserProfile } from '@loopback/security';
+
+export type SupertokensUserProfile = UserProfile & {
+  session: string;
+  userDataInAccessToken: Record<string, unknown>;
+  userId: string;
+};
+
 export interface WebhookEventUserInterface {
   id: string;
 }
