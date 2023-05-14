@@ -52,6 +52,7 @@ describe('@authorize w/ SuperTokensRBACAuthorizeProvider', () => {
             v: ['admin'],
           },
         }),
+        getHandle: () => '3733a3f3-566f-40af-aa6c-febd29481279',
       } as unknown as any),
     );
 

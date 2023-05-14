@@ -30,7 +30,7 @@ export class SupertokensInternalWebhookAuthenticationStrategy
     private webhookHelper: SupertokensWebhookHelper /* TODO interface */,
     @inject(LoopbackSupertokensBindings.WEBHOOK_SIGNATURE_HEADER_KEY)
     private webhookSignatureHeaderKey: string,
-    private debug = true,
+    private debug = false,
   ) {}
 
   async authenticate(): Promise<UserProfile | RedirectRoute | undefined> {

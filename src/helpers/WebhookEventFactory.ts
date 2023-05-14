@@ -13,7 +13,6 @@ import {
  *
  * This is why we declare a looser type here.
  */
-
 type APIResponseSharedInterface = {
   user: WebhookEventUserInterface;
 };

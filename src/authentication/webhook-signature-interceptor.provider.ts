@@ -20,7 +20,7 @@ export class WebhookSignatureInterceptorProvider
     private webhookHelper: SupertokensWebhookHelper /* TODO interface */,
     @inject(LoopbackSupertokensBindings.WEBHOOK_SIGNATURE_HEADER_KEY)
     private webhookSignatureHeaderKey: string,
-    private debug = true,
+    private debug = false,
   ) {}
 
   value() {

@@ -142,7 +142,7 @@ See also:
 
 ## Getting the current user
 
-Here's a controller action that uses Loopback's dependency injection and authentication component to get the current session and make it available to the front-end. `loopback-supertokens` encapsulate Supertokens and lets you rely entirely on [Loopback's authentication component/mechanism](https://loopback.io/doc/en/lb4/Loopback-component-authentication.html).
+Here's a controller action that uses Loopback's dependency injection and authentication component to get the current session and make it available to the front-end. `loopback-supertokens` encapsulates Supertokens and lets you rely entirely on [Loopback's authentication component/mechanism](https://loopback.io/doc/en/lb4/Loopback-component-authentication.html).
 
 ```ts
 export class AuthenticationController {
