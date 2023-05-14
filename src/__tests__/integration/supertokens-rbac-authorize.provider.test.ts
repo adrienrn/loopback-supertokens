@@ -8,7 +8,7 @@ import {
 import Session from 'supertokens-node/recipe/session';
 import { TestApplication } from '../fixtures/test-app/application';
 import { configureSupertokens } from '../fixtures/test-app/supertokens.config';
-import { SuperTokensRBACAuthorizeProvider } from '../../providers/supertokens-rbac-authorize.provider';
+import { SuperTokensRBACAuthorizeProvider } from '../../authorization/supertokens-rbac-authorize.provider';
 
 describe('@authorize w/ SuperTokensRBACAuthorizeProvider', () => {
   let app: TestApplication;
@@ -52,6 +52,7 @@ describe('@authorize w/ SuperTokensRBACAuthorizeProvider', () => {
             v: ['admin'],
           },
         }),
+        getHandle: () => '3733a3f3-566f-40af-aa6c-febd29481279',
       } as unknown as any),
     );
 

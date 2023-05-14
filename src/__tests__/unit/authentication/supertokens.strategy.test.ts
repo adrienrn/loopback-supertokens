@@ -3,7 +3,7 @@ import { RestBindings } from '@loopback/rest';
 import { expect, sinon } from '@loopback/testlab';
 import { Error as SuperTokensError } from 'supertokens-node';
 import Session from 'supertokens-node/recipe/session';
-import { SuperTokensAuthenticationStrategy } from '../../authentication-strategies/supertokens.strategy';
+import { SuperTokensAuthenticationStrategy } from '../../../authentication/supertokens.strategy';
 
 describe('SuperTokensAuthenticationStrategy', () => {
   let context: Context;
@@ -32,6 +32,7 @@ describe('SuperTokensAuthenticationStrategy', () => {
             v: ['admin'],
           },
         }),
+        getHandle: () => '3733a3f3-566f-40af-aa6c-febd29481279',
       } as unknown as any),
     );
 
@@ -48,6 +49,9 @@ describe('SuperTokensAuthenticationStrategy', () => {
       ) || '';
 
     expect((profile as any)[sym]).to.be.equal('123');
+    expect((profile as any).session).to.be.equal(
+      '3733a3f3-566f-40af-aa6c-febd29481279',
+    );
     expect((profile as any).userId).to.be.equal('123');
     expect((profile as any).userDataInAccessToken).to.be.deepEqual({
       'st-role': {
