@@ -267,13 +267,13 @@ supertokens.init({
 
 The key bit here is to write a controller that matches the endpoint hit by the callback. You can use `lb4 controller` for this.
 
-Another important aspect is to use `@authenticate('supertokens-internal-webhook')` to protect the endpoint, enforce signature verification and replay attack protection. This is provided by `loopback-supertokens`. Read [more about webhook signature](#more-about-webhook-signature) below.
+Another important aspect is to use `@authenticate('supertokens-internal-webhook')` to protect the endpoint, enforce signature verification and replay attack protection. This is provided by `loopback-supertokens`. Read [more about webhook signature](#webhooks-authentication-method) below.
 
 ```ts
 import { authenticate } from '@loopback/authentication';
 import { repository } from '@loopback/repository';
 import { post, requestBody } from '@loopback/rest';
-import { WEBHOOK_EVENT_TYPE, WebhookEvent } from 'loopback-supertokens';
+import { WebhookEvent, WebhookEventType } from 'loopback-supertokens';
 import { UserRepository } from '../../repositories';
 
 export class WebhookController {
@@ -289,7 +289,7 @@ export class WebhookController {
     event: WebhookEvent,
   ): Promise<void> {
     switch (event.type) {
-      case WEBHOOK_EVENT_TYPE.USER__SIGN_UP:
+      case WebhookEventType.UserSignUp:
         // Create the user out of the event data/payload:
         this.userRepository.create(event.data.user);
 
@@ -305,7 +305,7 @@ The main reason is that Supertokens callbacks are running **outside** of Loopbac
 
 Additionally, webhooks is a common pattern used for integrating two or more systems in a loosely coupled way. As your app scales, you might split it up into smaller, more manageable, components and webhooks will be helpful then and allow for flexibility in how each component is designed and implemented.
 
-### More about webhook signature
+### Webhooks authentication method
 
 Webhooks use hash-based message authentication code (HMAC) as webhook authentication method. This is, [by far, the most popular webhook authentication method out there](https://ngrok.com/blog-post/get-webhooks-secure-it-depends-a-field-guide-to-webhook-security) and if you worked with webhooks before you probably encountered this before.
 

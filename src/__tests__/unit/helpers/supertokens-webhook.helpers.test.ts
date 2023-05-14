@@ -1,12 +1,12 @@
 import { expect, sinon } from '@loopback/testlab';
 import axios, { AxiosError } from 'axios';
 import { SupertokensWebhookHelper } from '../../../helpers/supertokens-webhook.helper';
-import { WEBHOOK_EVENT_TYPE } from '../../../types';
+import { WebhookEventType } from '../../../types';
 
 describe('SupertokensWebhookHelper', () => {
   const mockWebhookEvent = {
     data: { user: { id: 'ede4bf8e-38f8-4ff7-b07a-2836de2ba904' } },
-    type: WEBHOOK_EVENT_TYPE.USER__SIGN_UP,
+    type: WebhookEventType.UserSignUp,
   };
 
   describe('dispatchWebhookEvent', () => {
@@ -136,11 +136,6 @@ describe('SupertokensWebhookHelper', () => {
   describe('computeEventSignature', () => {
     const webhookHelper = new SupertokensWebhookHelper('testkey');
 
-    const mockWebhookEvent = {
-      data: { user: { id: 'ede4bf8e-38f8-4ff7-b07a-2836de2ba904' } },
-      type: WEBHOOK_EVENT_TYPE.USER__SIGN_UP,
-    };
-
     it('Computes correct signature for tuple (event, timestamp, secret)', () => {
       const expectedSignature = 'YVDHA/tG6mDid95MtrBpcc4+RegJ7WpMpQlGQIekcQc=';
       expect(
@@ -151,7 +146,7 @@ describe('SupertokensWebhookHelper', () => {
         webhookHelper.computeEventSignature(
           {
             data: { user: { id: '0ab2bde4-9f31-4562-9d2a-5989dcf7db48' } }, // <- different uuid
-            type: WEBHOOK_EVENT_TYPE.USER__SIGN_UP,
+            type: WebhookEventType.UserSignUp,
           },
           1683561413,
         ),
@@ -206,7 +201,7 @@ describe('SupertokensWebhookHelper', () => {
       ],
     ].forEach(([input, expected], i) => {
       it(`Works #${i + 1}`, () => {
-        expect(webhookHelper['parseSignatureHeader'](input)).to.eql(expected);
+        expect(webhookHelper.parseSignatureHeader(input)).to.eql(expected);
       });
     });
 
@@ -226,7 +221,7 @@ describe('SupertokensWebhookHelper', () => {
     ].forEach(([input, expectedErrorMsg], i) => {
       it(`Throws for invalid input #${i + 1}`, () => {
         expect(() => {
-          webhookHelper['parseSignatureHeader'](input);
+          webhookHelper.parseSignatureHeader(input);
         }).to.throw(expectedErrorMsg);
       });
     });

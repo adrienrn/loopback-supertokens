@@ -1,19 +1,14 @@
 import { inject } from '@loopback/core';
-import axios, { AxiosError, AxiosResponse } from 'axios';
+import axios, { AxiosError } from 'axios';
 import crypto from 'crypto';
 import {
   DEFAULT_WEBHOOK_EVENT_EXPIRY,
   DEFAULT_WEBHOOK_SIGNATURE_HEADER_KEY,
   LoopbackSupertokensBindings,
 } from '../keys';
-import type {
-  UserSignInEvent,
-  UserSignUpEvent,
-  WebhookEvent,
-  WebhookEventUserInterface,
-} from '../types';
-import { WEBHOOK_EVENT_TYPE } from '../types';
+import type { WebhookEvent } from '../types';
 import { sanitizeWebhookEndpoint } from '../utils/sanitizeWebhookEndpoint';
+import { WebhookEventFactory } from './WebhookEventFactory';
 
 export class SupertokensWebhookHelper {
   constructor(
@@ -37,7 +32,7 @@ export class SupertokensWebhookHelper {
         },
       })
       .catch((err: AxiosError) => {
-        let message = err.message;
+        let { message } = err;
         if (err?.response?.statusText) {
           message = err.response.statusText;
         }
@@ -117,44 +112,16 @@ export class SupertokensWebhookHelper {
         return accumulator;
       }, {});
 
-    const timestampTokenValue = tokens['t'];
-    const signatureTokenValue = tokens['v1'];
+    const timestampTokenValue = tokens.t;
+    const signatureTokenValue = tokens.v1;
 
     if (!timestampTokenValue || !signatureTokenValue) {
       throw new Error('Malformed signature header');
     }
 
     return {
-      value: tokens['v1'],
-      timestamp: parseInt(tokens['t']),
-    };
-  }
-}
-
-export class WebhookEventFactory {
-  createUserSignInEvent(data: {
-    user: WebhookEventUserInterface;
-  }): UserSignInEvent {
-    return {
-      data: {
-        user: {
-          id: data.user.id,
-        },
-      },
-      type: WEBHOOK_EVENT_TYPE.USER__SIGN_IN,
-    };
-  }
-
-  createUserSignUpEvent(data: {
-    user: WebhookEventUserInterface;
-  }): UserSignUpEvent {
-    return {
-      data: {
-        user: {
-          id: data.user.id,
-        },
-      },
-      type: WEBHOOK_EVENT_TYPE.USER__SIGN_UP,
+      value: signatureTokenValue,
+      timestamp: parseInt(timestampTokenValue, 10),
     };
   }
 }

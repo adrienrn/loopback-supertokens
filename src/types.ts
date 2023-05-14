@@ -4,13 +4,13 @@ export interface WebhookEventUserInterface {
 
 export interface WebhookEventInterface<D> {
   data: D;
-  type: WEBHOOK_EVENT_TYPE;
+  type: WebhookEventType;
 }
 
 // @TODO should we actually use enums?
-export enum WEBHOOK_EVENT_TYPE {
-  USER__SIGN_IN = 'user.sign_in',
-  USER__SIGN_UP = 'user.sign_up',
+export enum WebhookEventType {
+  UserSignIn = 'user.sign_in',
+  UserSignUp = 'user.sign_up',
 }
 
 export interface UserSignInEvent
