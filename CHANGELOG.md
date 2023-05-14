@@ -1,3 +1,10 @@
+## [1.1.0](https://github.com/adrienrn/loopback-supertokens/compare/v1.0.2...v1.1.0) (2023-05-14)
+
+
+### Features
+
+* webhooks v1 ([#13](https://github.com/adrienrn/loopback-supertokens/issues/13)) ([024ae47](https://github.com/adrienrn/loopback-supertokens/commit/024ae47a42f8a95363b4d5985926baa62ff4280b))
+
 ## [1.0.2](https://github.com/adrienrn/loopback-supertokens/compare/v1.0.1...v1.0.2) (2023-05-04)
 
 
