@@ -53,6 +53,7 @@ describe('@authorize w/ SuperTokensRBACAuthorizeProvider', () => {
           },
         }),
         getHandle: () => '3733a3f3-566f-40af-aa6c-febd29481279',
+        getClaimValue: () => ['admin'],
       } as unknown as any),
     );
 
@@ -62,9 +63,34 @@ describe('@authorize w/ SuperTokensRBACAuthorizeProvider', () => {
     expect(getSessionStub.firstCall.args.length).to.be.equal(2);
 
     // authorize calls 'getSession' with (req, res, options)
-    expect(getSessionStub.secondCall.args.length).to.be.equal(3);
+    expect(getSessionStub.secondCall.args.length).to.be.equal(2);
 
     sinon.assert.calledOnce(authorizerSpy);
+
+    authorizerSpy.restore();
+  });
+
+  it('authorize returns 403 if user does not have "admin" role', async () => {
+    const authorizerSpy = sinon.spy(
+      SuperTokensRBACAuthorizeProvider.prototype,
+      'authorize',
+    );
+
+    getSessionStub = sinon.stub(Session, 'getSession').returns(
+      Promise.resolve({
+        getUserId: () => 'f48b7167-8d95-451c-bbfc-8a12cd49e763',
+        getAccessTokenPayload: () => ({
+          'st-role': {
+            t: 1681996316335,
+            v: ['guest'],
+          },
+        }),
+        getHandle: () => '3733a3f3-566f-40af-aa6c-febd29481279',
+        getClaimValue: () => ['guest'],
+      } as unknown as any),
+    );
+
+    await client.post('/refunds').expect(403);
 
     authorizerSpy.restore();
   });
