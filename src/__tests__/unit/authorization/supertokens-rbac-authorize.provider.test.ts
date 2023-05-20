@@ -12,8 +12,8 @@ import {
 import { expect, sinon, stubExpressContext } from '@loopback/testlab';
 import { Error as SuperTokensError } from 'supertokens-node';
 import Session from 'supertokens-node/recipe/session';
-import { SuperTokensRBACAuthorizeProvider } from '../../authorization/supertokens-rbac-authorize.provider';
-import { RefundController } from '../fixtures/test-app/controllers/refund.controller';
+import { SuperTokensRBACAuthorizeProvider } from '../../../authorization/supertokens-rbac-authorize.provider';
+import { RefundController } from '../../fixtures/test-app/controllers/refund.controller';
 
 describe('SuperTokensRBACAuthorizeProvider', () => {
   let context: Context;
@@ -64,35 +64,35 @@ describe('SuperTokensRBACAuthorizeProvider', () => {
     getSessionStub.restore();
   });
 
-  describe('checkIfUserHasAtLeastOneRole', () => {
+  describe('doesUserHaveRoles', () => {
     authorizerProvider = new SuperTokensRBACAuthorizeProvider();
 
     [
-      ['No roles found: 1 to 1', ['quartermaster'], ['chief'], false],
+      ['No roles found: 1 to 1', ['quartermaster'], ['chief'], []],
       [
         'No roles found: 1 to N',
         ['pirate'],
         ['quartermaster', 'chief', 'captain'],
-        false,
+        [],
       ],
-      ['Roles found: 1 to 1', ['chief'], ['chief'], true],
+      ['Roles found: 1 to 1', ['chief'], ['chief'], ['chief']],
       [
         'Roles found: 1 to N',
         ['captain'],
         ['quartermaster', 'chief', 'captain'],
-        true,
+        ['captain'],
       ],
       [
         'Roles found: N to N',
         ['pirate', 'captain'],
         ['quartermaster', 'chief', 'captain'],
-        true,
+        ['captain'],
       ],
     ].forEach(([testLabel, u, t, expected], i) => {
       it(`works "${testLabel}"`, () => {
-        expect(
-          (authorizerProvider as any).checkIfUserHasAtLeastOneRole(u, t),
-        ).to.eql(expected);
+        expect((authorizerProvider as any).doesUserHaveRoles(u, t)).to.eql(
+          expected,
+        );
       });
     });
   });

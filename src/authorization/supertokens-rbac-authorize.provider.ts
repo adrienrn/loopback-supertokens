@@ -17,45 +17,69 @@ export class SuperTokensRBACAuthorizeProvider implements Provider<Authorizer> {
   async authorize(
     authorizationCtx: AuthorizationContext,
     metadata: AuthorizationMetadata,
-  ) {
+  ): Promise<AuthorizationDecision> {
     const ctx = await authorizationCtx.invocationContext.get<MiddlewareContext>(
       MiddlewareBindings.CONTEXT,
     );
 
     try {
+      // Retrieve the current session.
+      // We're not using `overrideGlobalClaimValidators` here because `allowedRoles`
+      // and `deniedRoles` are an array with a logical "OR" between elements and
+      // claim validators `includesAll` and `excludesAll` are a logical "AND".
       const session = await Session.getSession(ctx, ctx);
 
-      const userRolesFromSession = await session.getClaimValue(
-        UserRoles.UserRoleClaim,
-      );
+      // We manually extract the role claim from the session.
+      const userRolesFromSession =
+        (await session.getClaimValue(UserRoles.UserRoleClaim)) || [];
 
-      if (metadata.allowedRoles && metadata.allowedRoles.length) {
-        return this.checkIfUserHasAtLeastOneRole(
+      const hasAllowedRoles =
+        metadata.allowedRoles && metadata.allowedRoles.length;
+      const hasDeniedRoles =
+        metadata.deniedRoles && metadata.deniedRoles.length;
+
+      const hasOneOfDeniedRoles =
+        this.doesUserHaveRoles(userRolesFromSession, metadata.deniedRoles || [])
+          .length > 0;
+      const hasOneOfAllowedRoles =
+        this.doesUserHaveRoles(
           userRolesFromSession,
-          metadata.allowedRoles,
-        )
-          ? AuthorizationDecision.ALLOW
-          : AuthorizationDecision.DENY;
+          metadata.allowedRoles || [],
+        ).length > 0;
+
+      if (hasOneOfAllowedRoles) {
+        // As soon as we have a match for an allowed role -> ALLOW
+        return AuthorizationDecision.ALLOW;
       }
 
-      if (metadata.deniedRoles && metadata.deniedRoles.length) {
-        return this.checkIfUserHasAtLeastOneRole(
-          userRolesFromSession,
-          metadata.deniedRoles,
-        )
-          ? AuthorizationDecision.DENY
-          : AuthorizationDecision.ALLOW;
+      if (hasOneOfDeniedRoles) {
+        // As soon as we have a match for a denied role -> DENY
+        return AuthorizationDecision.DENY;
       }
 
+      // 1. we have allowedRoles AND deniedRoles
+      if (hasAllowedRoles && hasDeniedRoles) {
+        return AuthorizationDecision.DENY;
+      }
+
+      // 2. we have allowedRoles only
+      if (hasAllowedRoles) {
+        return AuthorizationDecision.DENY;
+      }
+
+      // 3. we have deniedRoles only
+      if (hasDeniedRoles) {
+        return AuthorizationDecision.ALLOW;
+      }
+
+      // 4. we have nothing (odd!)
       return AuthorizationDecision.ABSTAIN;
     } catch (err) {
       return AuthorizationDecision.DENY;
     }
   }
 
-  checkIfUserHasAtLeastOneRole(userRoles: string[], targetRoles: string[]) {
-    return (
-      userRoles.filter((userRole) => targetRoles.includes(userRole)).length > 0
-    );
+  doesUserHaveRoles(userRoles: string[], targetRoles: string[]) {
+    return (userRoles || []).filter((r) => (targetRoles || []).includes(r));
   }
 }

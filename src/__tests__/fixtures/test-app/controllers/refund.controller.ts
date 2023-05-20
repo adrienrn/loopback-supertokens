@@ -1,6 +1,6 @@
 import { authenticate } from '@loopback/authentication';
 import { authorize } from '@loopback/authorization';
-import { post } from '@loopback/rest';
+import { get, post } from '@loopback/rest';
 
 export class RefundController {
   @authenticate('supertokens')
@@ -12,5 +12,15 @@ export class RefundController {
     return {
       id: '292983ea-a41a-4a83-b800-44b1764ee74e',
     };
+  }
+
+  @authenticate('supertokens')
+  @authorize({
+    allowedRoles: ['admin', 'manager'],
+    deniedRoles: ['moderator'],
+  })
+  @get('/refunds')
+  async get(): Promise<[]> {
+    return [];
   }
 }

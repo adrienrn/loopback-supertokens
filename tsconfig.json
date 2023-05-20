@@ -2,6 +2,7 @@
   "compilerOptions": {
     "declaration": true,
     "esModuleInterop": true,
+    "exactOptionalPropertyTypes": true,
     "experimentalDecorators": true,
     "forceConsistentCasingInFileNames": true,
     "module": "commonjs",
@@ -11,6 +12,7 @@
     "preserveConstEnums": true,
     "removeComments": true,
     "sourceMap": true,
+    "strictNullChecks": true,
     "target": "es6"
   },
   "exclude": ["node_modules"],
